@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBackendEndpoint } from '../../../config/backend';
+import { getBackendEndpoint } from '@/config/backend';
 
 export async function DELETE(
     req: NextRequest,

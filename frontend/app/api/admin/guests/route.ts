@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBackendEndpoint } from '../../../config/backend';
+import { getBackendEndpoint } from '@/config/backend';
 
 export async function GET(req: NextRequest) {
     const fullUrl = new URL(getBackendEndpoint('/guests/admin'));

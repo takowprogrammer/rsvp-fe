@@ -42,3 +42,8 @@ export const getInvitationPreviewUrl = (id: string): string => {
         return `${BACKEND_CONFIG.BASE_URL}/invitations/${id}/preview`;
     }
 };
+
+// Helper function to get full URL for a specific endpoint (used by API routes)
+export const getBackendEndpoint = (endpoint: string): string => {
+    return `${BACKEND_CONFIG.BASE_URL}${endpoint}`;
+};
