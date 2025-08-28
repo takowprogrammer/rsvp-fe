@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
+import { getBackendEndpoint } from '../../../config/backend';
 
 export async function GET(req: NextRequest) {
-    const fullUrl = new URL(`${backendUrl}/guests/admin`);
+    const fullUrl = new URL(getBackendEndpoint('/guests/admin'));
 
     // Forward query params from the incoming request
     req.nextUrl.searchParams.forEach((value, key) => {

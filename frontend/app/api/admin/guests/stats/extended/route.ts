@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
+import { getBackendEndpoint } from '../../../../../config/backend';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const eventDate = searchParams.get('eventDate');
 
     try {
-        const url = `${backendUrl}/guests/stats/extended${eventDate ? `?eventDate=${encodeURIComponent(eventDate)}` : ''}`;
+        const url = `${getBackendEndpoint('/guests/stats/extended')}${eventDate ? `?eventDate=${encodeURIComponent(eventDate)}` : ''}`;
         const response = await fetch(url, {
             method: 'GET',
             headers: {

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
+import { getBackendEndpoint } from '../../../../config/backend';
 
 export async function GET(req: NextRequest) {
     const authHeader = req.headers.get('authorization');
 
     try {
-        const res = await fetch(`${backendUrl}/guests/all`, {
+        const res = await fetch(getBackendEndpoint('/guests/all'), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

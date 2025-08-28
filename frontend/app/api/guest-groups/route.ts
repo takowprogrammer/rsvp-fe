@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
+import { getBackendEndpoint } from '../../config/backend';
 
 export async function GET() {
     try {
-        const response = await fetch(`${backendUrl}/guest-groups`, {
+        const response = await fetch(getBackendEndpoint('/guest-groups'), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        const response = await fetch(`${backendUrl}/guest-groups`, {
+        const response = await fetch(getBackendEndpoint('/guest-groups'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

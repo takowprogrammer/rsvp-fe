@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendEndpoint } from '../../../../config/backend';
 
 export async function DELETE(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
     const authHeader = req.headers.get('authorization');
 
     try {
-        const res = await fetch(`${backendUrl}/guests/${id}`, {
+        const res = await fetch(getBackendEndpoint(`/guests/${id}`), {
             method: 'DELETE',
             headers: {
                 ...(authHeader ? { Authorization: authHeader } : {}),

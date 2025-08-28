@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendEndpoint } from '../../../config/backend';
 
 export async function DELETE(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
 
     try {
-        const res = await fetch(`${backendUrl}/invitations/${id}`, {
+        const res = await fetch(getBackendEndpoint(`/invitations/${id}`), {
             method: 'DELETE',
         });
 
@@ -34,10 +34,9 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
 
     try {
-        const res = await fetch(`${backendUrl}/invitations/${id}`);
+        const res = await fetch(getBackendEndpoint(`/invitations/${id}`));
 
         if (!res.ok) {
             const result = await res.json();
@@ -62,11 +61,10 @@ export async function PUT(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api';
     const body = await req.json();
 
     try {
-        const res = await fetch(`${backendUrl}/invitations/${id}`, {
+        const res = await fetch(getBackendEndpoint(`/invitations/${id}`), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
