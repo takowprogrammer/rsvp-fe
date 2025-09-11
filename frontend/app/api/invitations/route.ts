@@ -1,81 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBackendEndpoint } from '@/config/environment';
+import { getBackendEndpoint } from '@/config/backend';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+    const authHeader = req.headers.get('authorization');
+
     try {
-        const response = await fetch(getBackendEndpoint('/invitations'), {
+        const res = await fetch(getBackendEndpoint('/invitations'), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                ...(authHeader ? { Authorization: authHeader } : {}),
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`Backend responded with status: ${response.status}`);
+        if (!res.ok) {
+            const result = await res.json().catch(() => ({ message: 'Failed to fetch invitations' }));
+            console.error('Invitations API error:', result);
+            return NextResponse.json({ error: result.message || 'Failed to fetch invitations' }, { status: res.status });
         }
 
-        const invitations = await response.json();
-        return NextResponse.json(invitations);
+        const result = await res.json();
+        return NextResponse.json(result);
     } catch (error) {
-        console.error('Error fetching invitations from backend:', error);
+        console.error('Error fetching invitations:', error);
         return NextResponse.json(
-            { error: 'Failed to fetch invitations' },
+            { message: 'Internal server error' },
             { status: 500 }
         );
     }
 }
 
 export async function POST(req: NextRequest) {
+    const authHeader = req.headers.get('authorization');
+
     try {
         const body = await req.json();
-        console.log('Received invitation creation request:', body);
-
-        const { templateName, title, message, buttonText, imageUrl, formUrl } = body;
-
-        // Validate required fields
-        if (!templateName || !title || !message || !buttonText) {
-            console.error('Missing required fields:', { templateName, title, message, buttonText });
-            return NextResponse.json(
-                { error: 'Missing required fields: templateName, title, message, and buttonText are required' },
-                { status: 400 }
-            );
-        }
-
-        const invitationData = {
-            templateName,
-            title,
-            message,
-            buttonText,
-            imageUrl: imageUrl || null,
-            formUrl: formUrl || '/rsvp',
-        };
-
-        console.log('Sending invitation data to backend:', invitationData);
-        console.log('Backend endpoint:', getBackendEndpoint('/invitations'));
-
-        // Send request to backend
-        const response = await fetch(getBackendEndpoint('/invitations'), {
+        
+        const res = await fetch(getBackendEndpoint('/invitations'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...(authHeader ? { Authorization: authHeader } : {}),
             },
-            body: JSON.stringify(invitationData),
+            body: JSON.stringify(body),
         });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-            console.error('Backend error response:', errorData);
-            throw new Error(errorData.error || errorData.message || `Backend responded with status: ${response.status}`);
+        if (!res.ok) {
+            const result = await res.json().catch(() => ({ message: 'Failed to create invitation' }));
+            console.error('Create invitation API error:', result);
+            return NextResponse.json({ error: result.message || 'Failed to create invitation' }, { status: res.status });
         }
 
-        const invitation = await response.json();
-        console.log('Created invitation via backend:', invitation);
-
-        return NextResponse.json(invitation, { status: 201 });
-    } catch (error: any) {
+        const result = await res.json();
+        return NextResponse.json(result, { status: 201 });
+    } catch (error) {
         console.error('Error creating invitation:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to create invitation' },
+            { message: 'Internal server error' },
             { status: 500 }
         );
     }

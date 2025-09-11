@@ -11,6 +11,21 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+
+  // Handle static file serving
+  async headers() {
+    return [
+      {
+        source: '/photos/story/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
