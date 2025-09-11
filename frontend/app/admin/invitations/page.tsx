@@ -215,7 +215,7 @@ export default function InvitationsPage() {
 
                                     <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0">
                                         <Link
-                                            href={`/api/invitations/${invitation.id}/preview`}
+                                            href={`/invitation/${invitation.id}?preview=1`}
                                             target="_blank"
                                             className="flex-1 px-3 py-2 text-sm bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-center"
                                         >
@@ -223,7 +223,7 @@ export default function InvitationsPage() {
                                         </Link>
                                         <button
                                             onClick={() => {
-                                                const previewUrl = `/api/invitations/${invitation.id}/preview`;
+                                                const previewUrl = `/invitation/${invitation.id}?preview=1`;
                                                 navigator.clipboard.writeText(previewUrl);
                                                 // You could add a toast notification here
                                             }}
@@ -247,4 +247,4 @@ export default function InvitationsPage() {
             </div>
         </div>
     );
-} 
+}

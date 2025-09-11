@@ -56,10 +56,13 @@ export default function AdminLoginPage() {
         <div className="min-h-screen bg-gradient-to-br from-amber-50 via-blue-50 to-amber-100 flex items-center justify-center px-4">
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-block mb-6">
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent">
-                            Doris & Emmanuel
-                        </h1>
+                    <Link href="/" className="inline-block mb-6 hover:opacity-80 transition-opacity duration-200">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src="/photos/story/logo.jpg"
+                            alt="Doris & Emmanuel Wedding Logo"
+                            className="w-16 h-16 rounded-full object-cover border-2 border-amber-200 shadow-lg mx-auto"
+                        />
                     </Link>
                     <div className="w-16 h-1 bg-gradient-to-r from-amber-400 to-blue-400 mx-auto mb-4"></div>
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">Admin Access</h2>

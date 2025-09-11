@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Ignore heavy media in frontend
+public/photos/videos/
+public/photos/story/*.mp4
+public/photos/
+public/program/
