@@ -15,25 +15,17 @@ export const api = {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        console.log('API GET request to:', url);
-        console.log('Headers:', headers);
-
         try {
             const res = await fetch(url, { headers });
-            console.log('Response status:', res.status);
-            console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({ message: 'Failed to parse error response' }));
-                console.error('API error response:', errorData);
                 throw new Error(errorData.message || 'API request failed');
             }
 
             const data = await res.json();
-            console.log('API response data:', data);
             return data;
         } catch (error) {
-            console.error('Error fetching data:', error);
             throw new Error('Failed to fetch data');
         }
     },
