@@ -112,84 +112,14 @@ export default function NewInvitationPage() {
             try {
                 setTemplatesLoading(true);
                 setTemplatesError(null);
-                console.log('Fetching templates...');
                 const res = await fetch("/api/invitations/templates");
                 if (res.ok) {
                     const data = await res.json();
-                    console.log('Templates loaded:', data);
-                    console.log('Template structure:', data.map((t: any) => ({
-                        file: t.file,
-                        templateName: t.templateName,
-                        imageUrl: t.imageUrl
-                    })));
-
-                    // The backend now returns all templates including uploaded files
-                    const allTemplates = data;
-                    console.log('All templates from backend:', allTemplates);
-                    console.log('Template count:', allTemplates.length);
-
-                    // Debug: Log first few templates with their image URLs
-                    allTemplates.slice(0, 3).forEach((template, index) => {
-                        console.log(`Template ${index + 1}:`, {
-                            file: template.file,
-                            imageUrl: template.imageUrl,
-                            displayName: template.displayName,
-                            finalUrl: getTemplateImageUrl(template)
-                        });
-                    });
-
-                    // Debug: Log the first template object completely
-                    if (allTemplates.length > 0) {
-                        console.log('🔍 First template object:', allTemplates[0]);
-                        console.log('🔍 All template properties:', Object.keys(allTemplates[0]));
-                        console.log('🔍 Template values:', allTemplates[0]);
-
-                        // Debug: Show template mapping for first template
-                        const firstTemplate = allTemplates[0];
-                        const templateName = getTemplateName(firstTemplate);
-                        const mappedUrl = getTemplateImageUrl(firstTemplate);
-                        console.log('🔍 Template mapping debug:', {
-                            templateName,
-                            mappedUrl,
-                            originalImageUrl: firstTemplate.imageUrl,
-                            file: firstTemplate.file,
-                            allProps: firstTemplate
-                        });
-
-                        // Debug: Show all templates
-                        console.log('🔍 All templates debug:', allTemplates.map((t, i) => ({
-                            index: i,
-                            file: t.file,
-                            templateName: t.templateName,
-                            imageUrl: t.imageUrl,
-                            finalUrl: getTemplateImageUrl(t),
-                            mapped: getTemplateImageUrl(t) !== t.imageUrl ? '✅ MAPPED' : '❌ NOT MAPPED'
-                        })));
-                    }
-
-                    // Debug: Check for duplicate keys
-                    const keys = allTemplates.map((t: any, index: number) => {
-                        const key = getTemplateKey(t, index);
-                        console.log(`Template ${index}: file="${getTemplateId(t)}", templateName="${getTemplateName(t)}", key="${key}"`);
-                        return key;
-                    });
-
-                    const uniqueKeys = new Set(keys);
-                    if (keys.length !== uniqueKeys.size) {
-                        console.warn('⚠️ Duplicate keys detected!', {
-                            total: keys.length,
-                            unique: uniqueKeys.size,
-                            duplicates: keys.filter((key, index) => keys.indexOf(key) !== index)
-                        });
-                    }
-
-                    setTemplates(allTemplates);
+                    setTemplates(data);
                 } else {
-                    console.error('Failed to fetch templates:', res.status, res.statusText);
                     setTemplatesError(`Failed to load templates: ${res.status} ${res.statusText}`);
                 }
             } catch (error) {
-                console.error('Error fetching templates:', error);
                 setTemplatesError('Failed to load templates. Please try refreshing the page.');
             } finally {
                 setTemplatesLoading(false);
@@ -232,7 +162,6 @@ export default function NewInvitationPage() {
             // Clear the file input
             e.target.value = '';
         } catch (error) {
-            console.error('Upload error:', error);
             setUploadError(error instanceof Error ? error.message : 'Upload failed');
         } finally {
             setUploading(false);
@@ -258,7 +187,6 @@ export default function NewInvitationPage() {
             }
 
             const result = await response.json();
-            console.log('Delete result:', result);
 
             // Refresh templates list
             const templatesRes = await fetch("/api/invitations/templates");
@@ -268,7 +196,6 @@ export default function NewInvitationPage() {
             }
 
         } catch (error) {
-            console.error('Delete error:', error);
             setDeleteError(error instanceof Error ? error.message : 'Delete failed');
         } finally {
             setDeleting(null);
@@ -302,7 +229,6 @@ export default function NewInvitationPage() {
                 isActive: true
             };
 
-            console.log('Submitting invitation data:', invitationData);
 
             const res = await fetch("/api/invitations", {
                 method: "POST",
@@ -316,12 +242,10 @@ export default function NewInvitationPage() {
 
             if (!res.ok) {
                 const errorData = await res.json();
-                console.error('Backend error response:', errorData);
                 throw new Error(errorData.error || errorData.message || "Failed to create invitation");
             }
 
             const result = await res.json();
-            console.log('Invitation created successfully:', result);
             setSuccess("Invitation created successfully! You can now view and share it from the admin area.");
 
             // Redirect to invitations page after a short delay
@@ -330,7 +254,6 @@ export default function NewInvitationPage() {
             }, 2000);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : "Something went wrong";
-            console.error('Error creating invitation:', err);
             setError(errorMessage);
         } finally {
             setSubmitting(false);
@@ -550,8 +473,6 @@ export default function NewInvitationPage() {
                                                 alt={getTemplateName(t)}
                                                 className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                                                 onError={(e) => {
-                                                    console.error('Image load error for template:', t);
-                                                    console.error('Image URL:', getTemplateImageUrl(t));
                                                     (e.target as HTMLImageElement).src = '/placeholder-image.png';
                                                 }}
                                             />
