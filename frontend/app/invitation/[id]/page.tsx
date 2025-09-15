@@ -123,7 +123,7 @@ export default function InvitationPage() {
           >
             <div className="relative rounded-2xl overflow-visible shadow-2xl border-4 border-white bg-white">
               <SmartImage
-                src={invitation.imageUrl}
+                src={invitation.imageUrl || '/placeholder-image.png'}
                 alt="Invitation"
                 className="w-full h-auto object-cover max-h-[85vh]"
               />
