@@ -10,6 +10,8 @@ interface TemplateItem {
     imageUrl?: string;
     displayName?: string;
     templateName?: string;
+    isUploaded?: boolean;
+    uploadedAt?: string;
     // Add common backend property names
     template_id?: string;
     template_name?: string;

@@ -7,16 +7,13 @@ export async function GET() {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            console.log(`🔍 Attempt ${attempt} to fetch templates from backend...`);
             const backendUrl = getBackendEndpoint('/invitations/templates');
-            console.log(`🔍 Backend URL: ${backendUrl}`);
 
             const response = await fetch(backendUrl, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Add timeout
                 signal: AbortSignal.timeout(10000), // 10 second timeout
             });
 
@@ -25,7 +22,6 @@ export async function GET() {
             }
 
             const templates = await response.json();
-            console.log('🔍 Backend templates response:', templates);
 
             // Add display names for better user experience
             const templatesWithDisplayNames = templates.map((t: any) => ({
@@ -35,18 +31,13 @@ export async function GET() {
                     .replace(/\b\w/g, (l: string) => l.toUpperCase())
             }));
 
-            console.log('🔍 Templates with display names:', templatesWithDisplayNames);
             return NextResponse.json(templatesWithDisplayNames);
         } catch (error) {
-            console.error(`Error fetching templates from backend (attempt ${attempt}):`, error);
-
             if (attempt === maxRetries) {
-                console.error('All retry attempts failed, using fallback templates');
                 break;
             }
 
             // Wait before retrying
-            console.log(`Waiting ${retryDelay}ms before retry...`);
             await new Promise(resolve => setTimeout(resolve, retryDelay));
         }
     }
