@@ -499,11 +499,13 @@ export default function NewInvitationPage() {
                                             type="button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleDeleteTemplate(t.file);
+                                                if (t.file) {
+                                                    handleDeleteTemplate(t.file);
+                                                }
                                             }}
-                                            disabled={deleting === t.file}
+                                            disabled={deleting === t.file || !t.file}
                                             className="absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 disabled:opacity-50"
-                                            title={`Delete ${t.file}`}
+                                            title={`Delete ${t.file || 'template'}`}
                                         >
                                             {deleting === t.file ? (
                                                 <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
