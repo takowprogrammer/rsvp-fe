@@ -2,8 +2,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Countdown from "@/components/Countdown";
-import { Analytics } from '@vercel/analytics/react';
 
 export default function Home() {
   const slides = [
