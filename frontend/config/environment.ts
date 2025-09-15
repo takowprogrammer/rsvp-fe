@@ -36,13 +36,13 @@ const getBackendUrl = (): string => {
 
     // Development environment
     if (isDevelopment) {
-        const devUrl = 'http://localhost:8080/api';
+        const devUrl = 'http://localhost:5000/api';
         console.log('🔧 Development mode detected, using backend URL:', devUrl);
         return devUrl;
     }
 
     // Fallback for other environments
-    const fallbackUrl = 'http://localhost:8080/api';
+    const fallbackUrl = 'http://localhost:5000/api';
     console.log('🔧 Using fallback backend URL:', fallbackUrl);
     return fallbackUrl;
 };

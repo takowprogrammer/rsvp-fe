@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
 
   // Handle image optimization
   images: {
-    unoptimized: true,
+    // Allow optimized loading for local/public images only
+    unoptimized: false,
+    remotePatterns: [],
   },
 
   // Handle static file serving
