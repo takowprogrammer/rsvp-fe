@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface RSVPFormData {
   firstName: string;
@@ -31,7 +32,18 @@ interface RSVPResponse {
 
 interface GuestGroup { id: string; name: string }
 
+interface Invitation {
+  id: string;
+  title: string;
+  message: string;
+  imageUrl?: string;
+  buttonText: string;
+  templateName: string;
+}
+
 export default function RSVPPage() {
+  const searchParams = useSearchParams();
+  const invitationId = searchParams?.get('invitation');
   const [formData, setFormData] = useState<RSVPFormData>({
     firstName: '',
     lastName: '',
@@ -43,10 +55,54 @@ export default function RSVPPage() {
     groupId: undefined,
   });
   const [groups, setGroups] = useState<GuestGroup[]>([]);
+  const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [loadingInvitation, setLoadingInvitation] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<RSVPResponse | null>(null);
   const [error, setError] = useState<string>('');
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  // Fetch invitation data if invitationId is provided
+  useEffect(() => {
+    if (!invitationId) return;
+
+    const fetchInvitation = async () => {
+      setLoadingInvitation(true);
+      try {
+        const response = await fetch(`/api/invitations/${invitationId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setInvitation(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch invitation:', error);
+      } finally {
+        setLoadingInvitation(false);
+      }
+    };
+
+    fetchInvitation();
+  }, [invitationId]);
+
+  // Countdown and redirect effect
+  useEffect(() => {
+    if (response && countdown === null) {
+      setCountdown(30);
+    }
+  }, [response, countdown]);
+
+  useEffect(() => {
+    if (countdown !== null && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0) {
+      // Redirect to home page after countdown
+      window.location.href = '/';
+    }
+  }, [countdown]);
 
   useEffect(() => {
     (async () => {
@@ -107,7 +163,7 @@ export default function RSVPPage() {
 
   if (response) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <div className="mb-6">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -120,6 +176,29 @@ export default function RSVPPage() {
             <p className="text-sm text-gray-500 mt-2">
               A copy of the QR code and backup alphanumeric code has been sent to <strong>{response.guest.email}</strong>.
             </p>
+
+            {/* Countdown timer */}
+            {countdown !== null && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
+                <p className="text-sm text-amber-800 mb-2">
+                  ⏰ <strong>Redirecting in {countdown} seconds...</strong> You'll be taken to the home page automatically.
+                </p>
+                <div className="flex gap-2 justify-center">
+                  <button
+                    onClick={() => setCountdown(null)}
+                    className="text-xs bg-amber-100 text-amber-800 px-3 py-1 rounded hover:bg-amber-200 transition-colors"
+                  >
+                    Stay on Page
+                  </button>
+                  <button
+                    onClick={() => window.location.href = '/'}
+                    className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                  >
+                    Go to Home Page
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Important Notice */}
@@ -201,11 +280,23 @@ export default function RSVPPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Wedding RSVP</h1>
-          <p className="text-gray-600">Please confirm your attendance</p>
+          {invitation ? (
+            <>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{invitation.title}</h1>
+              {invitation.message && (
+                <p className="text-gray-600 mb-4">{invitation.message}</p>
+              )}
+              <p className="text-gray-600">Please confirm your attendance</p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Wedding RSVP</h1>
+              <p className="text-gray-600">Please confirm your attendance</p>
+            </>
+          )}
         </div>
 
         {error && (
@@ -351,7 +442,7 @@ export default function RSVPPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full bg-gradient-to-r from-dusty-blue-600 to-amber-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-dusty-blue-700 hover:to-amber-600 focus:ring-2 focus:ring-dusty-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">

@@ -1,250 +1,227 @@
-"use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SmartImage from '@/components/SmartImage';
 
 interface Invitation {
     id: string;
-    templateName: string;
     title: string;
+    templateName: string;
     message: string;
-    imageUrl?: string;
+    imageUrl: string;
     buttonText: string;
-    formUrl?: string;
+    formUrl: string;
     isActive: boolean;
     createdAt: string;
+    updatedAt: string;
 }
 
 export default function InvitationsPage() {
     const [invitations, setInvitations] = useState<Invitation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
-        fetchInvitations();
-    }, []);
+        // Get token from cookie instead of localStorage
+        const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('admin_token='))
+            ?.split('=')[1];
 
-    const fetchInvitations = async () => {
+        if (!token) {
+            router.push('/admin/login');
+            return;
+        }
+
+        // Check if token is valid
         try {
-            const res = await fetch("/api/invitations");
-            if (res.ok) {
-                const data = await res.json();
-                setInvitations(data);
-            } else {
-                setError("Failed to fetch invitations");
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (!payload.exp || payload.exp <= currentTime) {
+                document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                router.push('/admin/login');
+                return;
             }
+        } catch {
+            document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            router.push('/admin/login');
+            return;
+        }
+
+        fetchData(token);
+    }, [router]);
+
+    const fetchData = async (token: string) => {
+        try {
+            // Use the local API endpoint that will forward to the backend
+            const response = await fetch('/api/invitations', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include' // Include cookies in the request
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    router.push('/admin/login');
+                    return;
+                }
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Failed to fetch invitations');
+            }
+
+            const data = await response.json();
+            setInvitations(data);
+            setLoading(false);
         } catch (err) {
-            setError("Failed to fetch invitations");
-        } finally {
+            setError(err instanceof Error ? err.message : 'An error occurred');
             setLoading(false);
         }
     };
 
-    const deleteInvitation = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this invitation? This action cannot be undone.")) {
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this invitation?')) {
             return;
         }
 
-        console.log('Deleting invitation:', id);
-        setDeletingId(id);
         try {
-            const res = await fetch(`/api/invitations/${id}`, {
+            const token = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('admin_token='))
+                ?.split('=')[1];
+
+            if (!token) {
+                router.push('/admin/login');
+                return;
+            }
+
+            // Use the local API endpoint that will forward to the backend
+            const response = await fetch(`/api/invitations?id=${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
-            console.log('Delete response status:', res.status);
-            console.log('Delete response ok:', res.ok);
-
-            if (res.ok) {
-                const result = await res.json();
-                console.log('Delete success:', result);
-                setInvitations(invitations.filter(inv => inv.id !== id));
-            } else {
-                const result = await res.json();
-                console.log('Delete failed:', result);
-                setError("Failed to delete invitation");
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Failed to delete invitation');
             }
-        } catch (error) {
-            console.error('Error deleting invitation:', error);
-            setError('Failed to delete invitation');
-        } finally {
-            setDeletingId(null);
+
+            setInvitations(invitations.filter(inv => inv.id !== id));
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
         }
     };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
-    const formatTemplateName = (name: string) => {
-        return name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    };
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-amber-50 via-blue-50 to-amber-100 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading invitations...</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-blue-50 to-amber-100">
-            {/* Navigation Header */}
-            <nav className="bg-white/80 backdrop-blur-md border-b border-amber-200/20 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
+        <>
+            {/* Loading state */}
+            {loading ? (
+                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50">
+                    <div className="p-8 border border-dusty-blue-200 rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl">
                         <div className="flex items-center space-x-4">
-                            <Link
-                                href="/admin"
-                                className="text-amber-600 hover:text-amber-800 font-medium transition-colors"
-                            >
-                                ← Back to Admin
-                            </Link>
-                            <span className="text-gray-400">|</span>
-                            <Link
-                                href="/"
-                                className="text-amber-600 hover:text-amber-800 font-medium transition-colors"
-                            >
-                                Wedding Home
-                            </Link>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dusty-blue-600"></div>
+                            <p className="text-lg font-medium text-gray-600">Loading invitations...</p>
                         </div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent">
-                            Wedding Invitations
-                        </h1>
-                        <Link
-                            href="/admin/invitations/new"
-                            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-blue-500 hover:from-amber-600 hover:to-blue-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                        >
-                            + New Invitation
-                        </Link>
                     </div>
                 </div>
-            </nav>
-
-            <div className="max-w-7xl mx-auto p-6">
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl shadow-sm">
-                        <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
+            ) : (
+                <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-6 md:p-10">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-800">Wedding Invitations</h1>
+                                <p className="text-gray-600 mt-2">Manage all your wedding invitations</p>
                             </div>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800">{error}</p>
+                            <div className="mt-4 md:mt-0">
+                                <Link
+                                    href="/admin/invitations/new"
+                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-dusty-blue-600 to-blue-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                                >
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Create New Invitation
+                                </Link>
                             </div>
                         </div>
-                    </div>
-                )}
 
-                {invitations.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
-                            <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No invitations yet</h3>
-                            <p className="text-gray-500 mb-6">Get started by creating your first beautiful invitation.</p>
-                            <Link
-                                href="/admin/invitations/new"
-                                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-500 to-blue-500 hover:from-amber-600 hover:to-blue-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                            >
-                                Create Your First Invitation
+                        {/* Back to Dashboard Link */}
+                        <div className="mb-8">
+                            <Link href="/admin" className="text-dusty-blue-600 hover:text-dusty-blue-800 font-medium inline-flex items-center">
+                                ← Back to Dashboard
                             </Link>
                         </div>
-                    </div>
-                ) : (
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {invitations.map((invitation) => (
-                            <div key={invitation.id} className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
-                                {invitation.imageUrl && (
-                                    <div className="h-40 sm:h-48 overflow-hidden flex-shrink-0">
-                                        <img
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {invitations.map((invitation) => (
+                                <div key={invitation.id} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-dusty-blue-200/20 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                                    {/* Invitation Image */}
+                                    <div className="relative h-56 overflow-hidden">
+                                        <SmartImage
                                             src={invitation.imageUrl}
                                             alt={invitation.title}
-                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                        />
-                                    </div>
-                                )}
-
-                                <div className="p-4 sm:p-6 flex-1 flex flex-col">
-                                    <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${invitation.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {invitation.isActive ? 'Active' : 'Inactive'}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {formatDate(invitation.createdAt)}
-                                        </span>
-                                    </div>
-
-                                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 line-clamp-2 flex-shrink-0">
-                                        {invitation.title}
-                                    </h3>
-
-                                    <p className="text-sm text-gray-600 mb-3 line-clamp-3 flex-1">
-                                        {invitation.message}
-                                    </p>
-
-                                    <div className="space-y-2 mb-4 text-xs text-gray-500 flex-shrink-0">
-                                        <div>
-                                            <span className="font-medium">Template:</span> {formatTemplateName(invitation.templateName)}
-                                        </div>
-                                        <div>
-                                            <span className="font-medium">Button:</span> {invitation.buttonText}
-                                        </div>
-                                        {invitation.formUrl && (
-                                            <div className="truncate">
-                                                <span className="font-medium">Form:</span>
-                                                <span className="truncate block">{invitation.formUrl}</span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0">
-                                        <Link
-                                            href={`/invitation/${invitation.id}?preview=1`}
-                                            target="_blank"
-                                            className="flex-1 px-3 py-2 text-sm bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-center"
-                                        >
-                                            Preview
-                                        </Link>
-                                        <button
-                                            onClick={() => {
-                                                const previewUrl = `/invitation/${invitation.id}?preview=1`;
-                                                navigator.clipboard.writeText(previewUrl);
-                                                // You could add a toast notification here
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = '/placeholder-image.png';
                                             }}
-                                            className="flex-1 px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-                                        >
-                                            Copy Link
-                                        </button>
-                                        <button
-                                            onClick={() => deleteInvitation(invitation.id)}
-                                            disabled={deletingId === invitation.id}
-                                            className="flex-1 px-3 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
-                                        >
-                                            {deletingId === invitation.id ? 'Deleting...' : 'Delete'}
-                                        </button>
+                                        />
+                                        <div className="absolute top-2 right-2">
+                                            <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium ${invitation.isActive
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-gray-100 text-gray-800'
+                                                }`}>
+                                                {invitation.isActive ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Invitation Content */}
+                                    <div className="p-2">
+                                        <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">{invitation.title}</h3>
+                                        <p className="text-gray-600 text-xs mb-1 line-clamp-1">{invitation.message}</p>
+                                        <p className="text-dusty-blue-600 text-xs mb-1">Template: {invitation.templateName}</p>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs text-gray-500">
+                                                Created: {new Date(invitation.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex gap-1 justify-end">
+                                            <Link
+                                                href={`/invitation/${invitation.id}`}
+                                                target="_blank"
+                                                className="bg-dusty-blue-500 hover:bg-dusty-blue-600 text-white text-xs font-medium py-0.5 px-2 rounded-sm transition-colors duration-200 text-center"
+                                            >
+                                                Preview
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(invitation.id)}
+                                                className="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-0.5 px-2 rounded-sm transition-colors duration-200"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                )}
-            </div>
-        </div>
+                </div>
+            )}
+        </>
     );
 }

@@ -4,7 +4,7 @@
 export const BACKEND_CONFIG = {
     // Base URL for your backend API
     // Common ports: 3001, 8000, 5000, 8080
-    BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001/api',
+    BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000/api',
 
     // Individual service endpoints
     INVITATIONS: '/invitations',

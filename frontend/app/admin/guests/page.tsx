@@ -40,17 +40,6 @@ export default function AdminGuestsPage() {
     const [totalPages, setTotalPages] = useState(0);
     const pageSize = 10;
 
-    // Debug logging for component state
-    console.log('Component render state:', {
-        guests: guests.length,
-        groups: groups.length,
-        selectedGroup,
-        searchTerm,
-        isLoading,
-        error,
-        currentPage,
-        totalPages
-    });
 
     // Check token expiration and warn user
     useEffect(() => {
@@ -66,12 +55,6 @@ export default function AdminGuestsPage() {
                     const minutes = Math.ceil(timeUntilExpiry / 60);
                     alert(`⚠️ Your session will expire in ${minutes} minute(s). Please save your work.`);
                 }
-
-                // Auto-logout when expired
-                if (timeUntilExpiry <= 0) {
-                    alert('🔒 Your session has expired. You will be redirected to login.');
-                    logout();
-                }
             } catch (error) {
                 console.error('Error checking token expiration:', error);
             }
@@ -80,59 +63,47 @@ export default function AdminGuestsPage() {
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
-        setError(''); // Clear previous errors
         try {
-            console.log('Fetching data with params:', { currentPage, pageSize, selectedGroup, searchTerm });
+            // Fetch guests with pagination
+            const guestsResponse = await api.get(`/api/admin/guests?page=${currentPage}&limit=${pageSize}${selectedGroup ? `&groupId=${selectedGroup}` : ''}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`);
 
-            // Fetch groups for the filter dropdown
+            setGuests(guestsResponse.guests || []);
+            // Calculate totalPages from total count
+            const total = guestsResponse.total || 0;
+            const calculatedTotalPages = Math.ceil(total / pageSize);
+            setTotalPages(calculatedTotalPages);
+
+            // Fetch groups for the filter
             const groupsData = await api.get('/api/guest-groups');
-            setGroups(groupsData);
+            setGroups(groupsData || []);
 
-            // Fetch guests
-            const guestUrl = new URL('/api/admin/guests', window.location.origin);
-            guestUrl.searchParams.append('page', currentPage.toString());
-            guestUrl.searchParams.append('limit', pageSize.toString());
-            if (selectedGroup && selectedGroup.trim() !== '') {
-                guestUrl.searchParams.append('groupId', selectedGroup);
-            }
-            if (searchTerm && searchTerm.trim() !== '') {
-                guestUrl.searchParams.append('search', searchTerm);
-            }
-
-            console.log('Fetching guests from:', guestUrl.toString());
-            const guestsData = await api.get(guestUrl.toString());
-            console.log('Guests data received:', guestsData);
-            console.log('Guests array:', guestsData.guests);
-            console.log('Total count:', guestsData.total);
-
-            setGuests(guestsData.guests || []);
-            setTotalPages(Math.ceil((guestsData.total || 0) / pageSize));
-
-            console.log('State updated - Guests:', guestsData.guests?.length || 0, 'Total pages:', Math.ceil((guestsData.total || 0) / pageSize));
-
+            setError('');
         } catch (err) {
-            console.error('Error fetching data:', err);
-            const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-            setError(`Failed to fetch data: ${errorMessage}`);
+            const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }
     }, [currentPage, pageSize, selectedGroup, searchTerm]);
 
     useEffect(() => {
-        const handler = setTimeout(() => {
-            fetchData();
-        }, 500); // Debounce search input
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [currentPage, pageSize, selectedGroup, searchTerm]); // Only depend on the actual values, not fetchData
-
-    // Initial data fetch when component mounts
-    useEffect(() => {
         fetchData();
-    }, []); // Empty dependency array means this runs once on mount
+    }, [fetchData]);
+
+    const handleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedGroup(e.target.value);
+        setCurrentPage(1); // Reset to first page when changing filters
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setCurrentPage(1); // Reset to first page when searching
+        fetchData();
+    };
 
     const handlePreviousPage = () => {
         setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -155,77 +126,91 @@ export default function AdminGuestsPage() {
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-6 md:p-10">
+                <div className="max-w-7xl mx-auto flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-dusty-blue-600"></div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-blue-50 to-amber-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent">Wedding Guest List</h1>
+                            <h1 className="text-3xl font-bold bg-gradient-to-r from-dusty-blue-600 to-blue-600 bg-clip-text text-transparent">Wedding Guest List</h1>
                             <p className="text-gray-600 mt-1">View, filter, and search all RSVPs for Doris & Emmanuel's special day.</p>
                         </div>
                         <div className="flex items-center space-x-3">
                             <Link
                                 href="/admin"
-                                className="px-4 py-2 text-sm font-medium text-amber-700 bg-white border border-amber-300 rounded-md hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 focus:outline-none focus:ring-2 focus:ring-dusty-blue-500 focus:border-dusty-blue-500 transition-colors"
                             >
-                                ← Back to Dashboard
+                                Back to Dashboard
                             </Link>
-                            <Link
-                                href="/"
-                                className="px-4 py-2 text-sm font-medium text-amber-700 bg-white border border-amber-300 rounded-md hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-                            >
-                                🏠 Wedding Home
-                            </Link>
-                            <button
-                                onClick={logout}
-                                className="px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                            >
-                                Logout
-                            </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Filter and Search Controls */}
-                <div className="mb-6 flex items-center space-x-4">
-                    <div className="flex-1">
-                        <label htmlFor="search" className="sr-only">Search</label>
-                        <input
-                            type="text"
-                            id="search"
-                            placeholder="Search by name..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="block w-full px-4 py-2 border border-amber-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
-                        />
+                {error && (
+                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                        <p>{error}</p>
                     </div>
-                    <div>
-                        <label htmlFor="group-filter" className="font-medium text-gray-700 sr-only">Filter by Group:</label>
-                        <select
-                            id="group-filter"
-                            value={selectedGroup}
-                            onChange={(e) => setSelectedGroup(e.target.value)}
-                            className="block w-64 px-3 py-2 border border-amber-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
-                        >
-                            <option value="">All Groups</option>
-                            {groups.map(group => (
-                                <option key={group.id} value={group.id}>{group.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+                )}
 
-                {/* Data Table */}
-                <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-amber-200">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+                    <div className="p-6 border-b border-dusty-blue-200">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
+                                <div className="relative flex-1">
+                                    <input
+                                        type="text"
+                                        placeholder="Search guests..."
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent"
+                                    />
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="ml-2 px-4 py-2 bg-dusty-blue-600 text-white font-medium rounded-lg shadow hover:bg-dusty-blue-700 transition-colors"
+                                >
+                                    Search
+                                </button>
+                            </form>
+
+                            <div className="w-full md:w-64">
+                                <select
+                                    value={selectedGroup}
+                                    onChange={handleGroupChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent"
+                                >
+                                    <option value="">All Groups</option>
+                                    {groups.map(group => (
+                                        <option key={group.id} value={group.id}>{group.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="overflow-x-auto">
-                        {isLoading ? (
-                            <p className="p-6 text-center text-gray-500">Loading guests...</p>
-                        ) : error ? (
-                            <p className="p-6 text-center text-red-500">{error}</p>
+                        {guests.length === 0 && !isLoading ? (
+                            <div className="p-8 text-center">
+                                <p className="text-lg text-gray-500">No guests found matching your criteria.</p>
+                            </div>
                         ) : (
-                            <table className="min-w-full divide-y divide-amber-200">
-                                <thead className="bg-gradient-to-r from-amber-50 to-blue-50">
+                            <table className="min-w-full divide-y divide-dusty-blue-200">
+                                <thead className="bg-gray-50">
                                     <tr>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
@@ -238,38 +223,40 @@ export default function AdminGuestsPage() {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-amber-200">
-                                    {guests.length > 0 ? guests.map(guest => (
-                                        <tr key={guest.id} className="hover:bg-amber-50/50 transition-colors duration-200">
+                                <tbody className="bg-white divide-y divide-dusty-blue-200">
+                                    {guests.map(guest => (
+                                        <tr key={guest.id} className="hover:bg-dusty-blue-50/50 transition-colors duration-200">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{guest.firstName} {guest.lastName}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{guest.email}<br />{guest.phone}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{guest.group?.name || 'N/A'}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{guest.qrCode?.alphanumericCode || 'N/A'}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${guest.checkedIn ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${guest.checkedIn ? 'bg-green-100 text-green-800' : 'bg-dusty-blue-100 text-dusty-blue-800'}`}>
                                                     {guest.checkedIn ? 'Checked-In' : guest.status}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(guest.createdAt).toLocaleDateString()}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <button onClick={() => handleDelete(guest.id)} className="text-red-600 hover:text-red-900">Delete</button>
+                                                <button
+                                                    onClick={() => handleDelete(guest.id)}
+                                                    className="text-red-600 hover:text-red-900"
+                                                >
+                                                    Delete
+                                                </button>
                                             </td>
                                         </tr>
-                                    )) : (
-                                        <tr>
-                                            <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">No guests found.</td>
-                                        </tr>
-                                    )}
+                                    ))}
                                 </tbody>
                             </table>
                         )}
                     </div>
+
                     {/* Pagination Controls */}
-                    <div className="px-6 py-4 border-t border-amber-200 flex items-center justify-between bg-gradient-to-r from-amber-50 to-blue-50">
+                    <div className="px-6 py-4 border-t border-dusty-blue-200 flex items-center justify-between bg-gradient-to-r from-dusty-blue-50 to-blue-50">
                         <button
                             onClick={handlePreviousPage}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 text-sm font-medium text-amber-700 bg-white border border-amber-300 rounded-md hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             Previous
                         </button>
@@ -279,7 +266,7 @@ export default function AdminGuestsPage() {
                         <button
                             onClick={handleNextPage}
                             disabled={currentPage === totalPages || totalPages === 0}
-                            className="px-4 py-2 text-sm font-medium text-amber-700 bg-white border border-amber-300 rounded-md hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             Next
                         </button>

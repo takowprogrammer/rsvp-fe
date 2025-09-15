@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import SmartImage from '@/components/SmartImage';
 
 interface TemplateItem {
     id?: string;
@@ -52,47 +53,14 @@ const getTemplateName = (template: any): string => {
 
 // Get template image URL safely - use imageUrl from backend
 const getTemplateImageUrl = (template: any): string => {
-    // The backend returns template names like "dusty_blue_nude_blend" but the actual
-    // image files are named like "wedding_invitation_dusty_blue_nude_blend.png"
-    // So we need to map the backend names to the correct image file paths
-    const templateName = getTemplateName(template);
-
-    // Map backend template names to actual image files
-    // This includes ALL available images, not just what the backend returns
-    const templateImageMap: { [key: string]: string } = {
-        // Backend template names mapped to actual files
-        'dusty_blue_nude_blend': '/invitations/wedding_invitation_dusty_blue_nude_blend.png',
-        'dusty_blue_serenity': '/invitations/wedding_invitation_dusty_blue_serenity.png',
-        'elegant_floral_invitation': '/invitations/invitation-template-1.png',
-        'modern_minimalist_invitation': '/invitations/invitation-template-2.png',
-        'nude_warmth': '/invitations/invitation-template-3.png',
-        'phoenix_sand_radiance': '/invitations/invitation-template-4.png',
-        'pure_white_elegance': '/invitations/wedding_invitation_improved_1.png',
-        'vintage_romantic_invitation': '/invitations/wedding_invitation_improved_3.png',
-
-        // Additional images that exist but backend might not return
-        'wedding_invitation_improved_4': '/invitations/wedding_invitation_improved_4.png',
-        'wedding_invitation_template_1': '/invitations/wedding_invitation_template_1.png',
-        'wedding_photo': '/invitations/wedding_photo.png',
-
-        // Alternative names for the same images
-        'improved_4': '/invitations/wedding_invitation_improved_4.png',
-        'template_1': '/invitations/wedding_invitation_template_1.png',
-        'photo': '/invitations/wedding_photo.png',
-    };
-
-    // If we have a mapping for this template name, use it
-    if (templateName && templateImageMap[templateName]) {
-        return templateImageMap[templateName];
-    }
-
-    // Fallback to the backend's imageUrl if no mapping exists
+    // The backend provides imageUrl like "/invitations/image.png"
+    // We need to use this directly as it should work with the frontend's public folder
     const imageUrl = getTemplateProperty(template, 'imageUrl') || '';
     if (imageUrl) {
         return imageUrl;
     }
 
-    // Last fallback: construct from file name
+    // Fallback: construct from file name
     const file = getTemplateProperty(template, 'file') || '';
     if (file) {
         return `/invitations/${file}`;
@@ -116,6 +84,11 @@ export default function NewInvitationPage() {
     const [templatesLoading, setTemplatesLoading] = useState(true);
     const [templatesError, setTemplatesError] = useState<string | null>(null);
     const [templateSearch, setTemplateSearch] = useState("");
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<string | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     // Filter templates based on search
     const filteredTemplates = templates.filter(t =>
@@ -150,31 +123,20 @@ export default function NewInvitationPage() {
                         imageUrl: t.imageUrl
                     })));
 
-                    // Create additional templates for missing images
-                    const additionalTemplates = [
-                        {
-                            templateName: "wedding_invitation_improved_4",
-                            imageUrl: "/invitations/wedding_invitation_improved_4.png",
-                            file: "wedding_invitation_improved_4.png",
-                            displayName: "Wedding Invitation Improved 4"
-                        },
-                        {
-                            templateName: "wedding_invitation_template_1",
-                            imageUrl: "/invitations/wedding_invitation_template_1.png",
-                            file: "wedding_invitation_template_1.png",
-                            displayName: "Wedding Invitation Template 1"
-                        },
-                        {
-                            templateName: "wedding_photo",
-                            imageUrl: "/invitations/wedding_photo.png",
-                            file: "wedding_photo.png",
-                            displayName: "Wedding Photo"
-                        }
-                    ];
+                    // The backend now returns all templates including uploaded files
+                    const allTemplates = data;
+                    console.log('All templates from backend:', allTemplates);
+                    console.log('Template count:', allTemplates.length);
 
-                    // Combine backend templates with additional templates
-                    const allTemplates = [...data, ...additionalTemplates];
-                    console.log('All templates (backend + additional):', allTemplates);
+                    // Debug: Log first few templates with their image URLs
+                    allTemplates.slice(0, 3).forEach((template, index) => {
+                        console.log(`Template ${index + 1}:`, {
+                            file: template.file,
+                            imageUrl: template.imageUrl,
+                            displayName: template.displayName,
+                            finalUrl: getTemplateImageUrl(template)
+                        });
+                    });
 
                     // Debug: Log the first template object completely
                     if (allTemplates.length > 0) {
@@ -235,12 +197,100 @@ export default function NewInvitationPage() {
         })();
     }, []);
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        setUploadError(null);
+        setUploadSuccess(null);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/invitations/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Upload failed');
+            }
+
+            const result = await response.json();
+            setUploadSuccess(`File uploaded successfully: ${result.originalName}`);
+
+            // Refresh templates to include the new upload
+            const templatesRes = await fetch("/api/invitations/templates");
+            if (templatesRes.ok) {
+                const templatesData = await templatesRes.json();
+                setTemplates(templatesData);
+            }
+
+            // Clear the file input
+            e.target.value = '';
+        } catch (error) {
+            console.error('Upload error:', error);
+            setUploadError(error instanceof Error ? error.message : 'Upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleDeleteTemplate = async (filename: string) => {
+        if (!confirm(`Are you sure you want to delete "${filename}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        setDeleting(filename);
+        setDeleteError(null);
+
+        try {
+            const response = await fetch(`/api/invitations/template/${encodeURIComponent(filename)}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Delete failed');
+            }
+
+            const result = await response.json();
+            console.log('Delete result:', result);
+
+            // Refresh templates list
+            const templatesRes = await fetch("/api/invitations/templates");
+            if (templatesRes.ok) {
+                const templatesData = await templatesRes.json();
+                setTemplates(templatesData);
+            }
+
+        } catch (error) {
+            console.error('Delete error:', error);
+            setDeleteError(error instanceof Error ? error.message : 'Delete failed');
+        } finally {
+            setDeleting(null);
+        }
+    };
+
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitting(true);
         setError(null);
         setSuccess(null);
         try {
+            const token = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('admin_token='))
+                ?.split('=')[1];
+
+            if (!token) {
+                router.push('/admin/login');
+                return;
+            }
+
             const formData = new FormData(e.currentTarget);
             const invitationData = {
                 title: formData.get('title') as string,
@@ -256,7 +306,11 @@ export default function NewInvitationPage() {
 
             const res = await fetch("/api/invitations", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                credentials: 'include', // Include cookies in the request
                 body: JSON.stringify(invitationData),
             });
 
@@ -284,34 +338,26 @@ export default function NewInvitationPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-nude-50 via-phoenix-sand-50 to-dusty-blue-50">
-            {/* Navigation Header */}
-            <nav className="bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <Link
-                                href="/admin"
-                                className="text-dusty-blue-600 hover:text-dusty-blue-800 font-medium transition-colors"
-                            >
-                                ← Back to Admin
-                            </Link>
-                            <span className="text-gray-400">|</span>
-                            <button
-                                onClick={() => router.push('/')}
-                                className="text-dusty-blue-600 hover:text-dusty-blue-800 font-medium transition-colors"
-                            >
-                                Home
-                            </button>
-                        </div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-nude-600 to-phoenix-sand-600 bg-clip-text text-transparent">
-                            Create Invitation
-                        </h1>
+        <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-6 md:p-10">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">Create New Invitation</h1>
+                        <p className="text-gray-600">Design a beautiful invitation for your guests</p>
+                    </div>
+                    <div className="mt-4 md:mt-0">
+                        <Link
+                            href="/admin/invitations"
+                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-dusty-blue-600 to-blue-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back to Invitations
+                        </Link>
                     </div>
                 </div>
-            </nav>
 
-            <div className="max-w-6xl mx-auto p-6">
                 {/* Success/Error Messages */}
                 {success && (
                     <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl shadow-sm">
@@ -363,6 +409,81 @@ export default function NewInvitationPage() {
                     </div>
                 )}
 
+                {/* File Upload Section */}
+                <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Upload Your Own Image</h2>
+
+                    {/* Upload Messages */}
+                    {uploadSuccess && (
+                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <div className="flex items-center">
+                                <svg className="h-5 w-5 text-green-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                <p className="text-sm text-green-800">{uploadSuccess}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {uploadError && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                </svg>
+                                <p className="text-sm text-red-800">{uploadError}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {deleteError && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                </svg>
+                                <p className="text-sm text-red-800">{deleteError}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-4">
+                        <label className="flex-1 cursor-pointer">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileUpload}
+                                disabled={uploading}
+                                className="hidden"
+                            />
+                            <div className={`w-full px-6 py-4 border-2 border-dashed rounded-xl text-center transition-all duration-200 ${uploading
+                                ? 'border-dusty-blue-300 bg-dusty-blue-50 cursor-not-allowed'
+                                : 'border-dusty-blue-300 hover:border-dusty-blue-500 hover:bg-dusty-blue-50'
+                                }`}>
+                                {uploading ? (
+                                    <div className="flex items-center justify-center">
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-dusty-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Uploading...
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <svg className="mx-auto h-12 w-12 text-dusty-blue-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                        <p className="mt-2 text-sm text-gray-600">
+                                            <span className="font-medium text-dusty-blue-600 hover:text-dusty-blue-500">Click to upload</span> or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                    </div>
+                                )}
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 {/* Visual Template Picker */}
                 <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
                     <div className="flex items-center justify-between mb-4">
@@ -376,7 +497,7 @@ export default function NewInvitationPage() {
 
                     {templatesLoading && (
                         <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-phoenix-sand-500 mx-auto mb-4"></div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dusty-blue-500 mx-auto mb-4"></div>
                             <p className="text-gray-600">Loading templates...</p>
                         </div>
                     )}
@@ -391,7 +512,7 @@ export default function NewInvitationPage() {
                             <p className="text-red-600 mb-4">{templatesError}</p>
                             <button
                                 onClick={() => window.location.reload()}
-                                className="px-4 py-2 bg-phoenix-sand-500 text-white rounded-lg hover:bg-phoenix-sand-600 transition-colors"
+                                className="px-4 py-2 bg-dusty-blue-500 text-white rounded-lg hover:bg-dusty-blue-600 transition-colors"
                             >
                                 Refresh Page
                             </button>
@@ -406,45 +527,75 @@ export default function NewInvitationPage() {
                                     placeholder="Search templates..."
                                     value={templateSearch}
                                     onChange={(e) => setTemplateSearch(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {filteredTemplates.map((t, index) => (
-                                    <button
-                                        key={getTemplateKey(t, index)}
-                                        type="button"
-                                        onClick={() => {
-                                            setTemplateName(getTemplateName(t));
-                                            setImageUrl(getTemplateProperty(t, 'imageUrl') || '');
-                                        }}
-                                        className={`group relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:scale-105 ${templateName === getTemplateName(t)
-                                            ? 'border-phoenix-sand-500 ring-4 ring-phoenix-sand-200'
-                                            : 'border-gray-200 hover:border-phoenix-sand-300'
-                                            }`}
-                                        title={getTemplateName(t)}
-                                    >
-                                        <img
-                                            src={getTemplateImageUrl(t)}
-                                            alt={getTemplateName(t)}
-                                            className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
-                                            <div className="text-xs font-medium text-white bg-black/50 rounded px-2 py-1 truncate">
-                                                {t.displayName || getTemplateName(t).replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                            </div>
-                                        </div>
-                                    </button>
+                                    <div key={getTemplateKey(t, index)} className="relative group">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setTemplateName(getTemplateName(t));
+                                                setImageUrl(getTemplateProperty(t, 'imageUrl') || '');
+                                            }}
+                                            className={`w-full relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:scale-105 ${templateName === getTemplateName(t)
+                                                ? 'border-dusty-blue-500 ring-4 ring-dusty-blue-200'
+                                                : 'border-gray-200 hover:border-dusty-blue-300'
+                                                }`}
+                                            title={getTemplateName(t)}
+                                        >
+                                            <SmartImage
+                                                src={getTemplateImageUrl(t)}
+                                                alt={getTemplateName(t)}
+                                                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                                                onError={(e) => {
+                                                    console.error('Image load error for template:', t);
+                                                    console.error('Image URL:', getTemplateImageUrl(t));
+                                                    (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                                            {/* Upload indicator */}
+                                            {t.isUploaded && (
+                                                <div className="absolute top-2 right-2">
+                                                    <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                        </svg>
+                                                        Uploaded
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        </button>
+
+                                        {/* Delete button */}
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteTemplate(t.file);
+                                            }}
+                                            disabled={deleting === t.file}
+                                            className="absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 disabled:opacity-50"
+                                            title={`Delete ${t.file}`}
+                                        >
+                                            {deleting === t.file ? (
+                                                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
                                 ))}
                             </div>
                         </>
-                    )}
-
-                    {!templatesLoading && !templatesError && templates.length === 0 && (
-                        <div className="text-center py-8">
-                            <p className="text-gray-600">No templates available.</p>
-                        </div>
                     )}
                 </div>
 
@@ -456,7 +607,7 @@ export default function NewInvitationPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Template</label>
                                 <select
                                     name="templateName"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                     value={templateName}
                                     onChange={(e) => {
                                         const name = e.target.value;
@@ -485,7 +636,7 @@ export default function NewInvitationPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
                                 <input
                                     name="buttonText"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                                     value={buttonText}
                                     onChange={e => setButtonText(e.target.value)}
                                     required
@@ -506,7 +657,7 @@ export default function NewInvitationPage() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                             <input
                                 name="title"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                                 value={title}
                                 onChange={e => setTitle(e.target.value)}
                                 placeholder="Enter your invitation title..."
@@ -518,7 +669,7 @@ export default function NewInvitationPage() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
                             <textarea
                                 name="message"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm resize-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm resize-none"
                                 rows={4}
                                 value={message}
                                 onChange={e => setMessage(e.target.value)}
@@ -531,7 +682,7 @@ export default function NewInvitationPage() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Form URL (optional)</label>
                             <input
                                 name="formUrl"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-phoenix-sand-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                                 value={formUrl}
                                 onChange={e => setFormUrl(e.target.value)}
                                 placeholder="/rsvp"
@@ -543,7 +694,7 @@ export default function NewInvitationPage() {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full px-6 py-4 bg-gradient-to-r from-phoenix-sand-500 to-nude-500 hover:from-phoenix-sand-600 hover:to-nude-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                className="w-full px-6 py-4 bg-gradient-to-r from-dusty-blue-500 to-blue-500 hover:from-dusty-blue-600 hover:to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                             >
                                 {submitting ? (
                                     <div className="flex items-center justify-center">
