@@ -56,6 +56,9 @@ export default function InvitationPage() {
         imageUrl: '/invitations/wedding_invitation_improved_4.png',
         buttonText: 'RSVP Now',
         formUrl: '/rsvp',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
       setError('');
       setLoading(false);
