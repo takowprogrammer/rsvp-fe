@@ -11,6 +11,7 @@ export default function ProgramPage() {
     { id: "rehearsal", label: "Rehearsal Dinner" },
     { id: "traditional", label: "Traditional Rites" },
     { id: "civil", label: "Civil Wedding" },
+    { id: "reception", label: "Civil and Traditional Wedding Reception" },
   ];
 
   return (
@@ -543,6 +544,80 @@ export default function ProgramPage() {
                       <span>🌍</span>
                       <span>Open to all who would love to witness this Moment</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "reception" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Civil and Traditional Wedding Reception</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">27th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">5:00 PM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span>Kumba 1 Council Hall</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Colors and Asoebi Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Color Scheme</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Colors</h4>
+                    <div className="space-y-2 text-dusty-blue-600">
+                      <p className="font-medium">Burnt Orange</p>
+                      <p className="font-medium">Cayenne Orange</p>
+                      <p className="font-medium">All shades of Brown</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Asoebi Available</h4>
+                    <p className="text-dusty-blue-600">There is Asoebi for those who might need</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Third Card - Guest Information */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Guest Information</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Invited Guests</h4>
+                    <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
+                      <span>🎫</span>
+                      <span>On Invitation</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
+                    <p className="text-2xl font-bold text-dusty-blue-600">250</p>
                   </div>
                 </div>
               </div>
