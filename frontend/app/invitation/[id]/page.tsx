@@ -18,6 +18,25 @@ interface Invitation {
   updatedAt: string;
 }
 
+// Helper function to get the correct image URL
+const getImageUrl = (imageUrl?: string): string => {
+  if (!imageUrl) return '';
+
+  // If it's already an API URL, return as is
+  if (imageUrl.startsWith('/api/invitations/image/')) {
+    return imageUrl;
+  }
+
+  // If it's a static path like /invitations/filename.jpg, convert to API URL
+  if (imageUrl.startsWith('/invitations/')) {
+    const filename = imageUrl.replace('/invitations/', '');
+    return `/api/invitations/image/${filename}`;
+  }
+
+  // For any other format, return as is
+  return imageUrl;
+};
+
 function InvitationContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -123,7 +142,7 @@ function InvitationContent() {
           >
             <div className="relative rounded-2xl overflow-visible shadow-2xl border-4 border-white bg-white">
               <SmartImage
-                src={invitation.imageUrl || '/placeholder-image.png'}
+                src={getImageUrl(invitation.imageUrl) || '/placeholder-image.png'}
                 alt="Invitation"
                 className="w-full h-auto object-cover max-h-[85vh]"
               />
@@ -207,7 +226,7 @@ function InvitationContent() {
             <div className="absolute inset-x-0 top-24 sm:top-28 md:top-32 lg:top-36 bottom-12 sm:bottom-14 md:bottom-16 lg:bottom-20 mx-4 sm:mx-6 md:mx-8 pointer-events-none">
               <div className="relative rounded-lg overflow-hidden shadow-lg border-2 border-white/60 bg-white/90 backdrop-blur-sm">
                 <SmartImage
-                  src={invitation.imageUrl}
+                  src={getImageUrl(invitation.imageUrl)}
                   alt="Invitation preview"
                   className="w-full h-24 sm:h-28 md:h-32 lg:h-36 object-cover opacity-60"
                 />
