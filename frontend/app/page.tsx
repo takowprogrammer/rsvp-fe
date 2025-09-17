@@ -197,7 +197,7 @@ export default function Home() {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-3 sm:p-4">
               <div className="relative w-full h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden">
                 <Image
-                  src="/photos/story/story3.jpg"
+                  src="/photos/story/our_story2.jpg"
                   alt="Story photo"
                   fill
                   className="object-cover"
