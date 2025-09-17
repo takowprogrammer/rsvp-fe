@@ -15,10 +15,15 @@ const nextConfig: NextConfig = {
     unoptimized: false,
     remotePatterns: [
       {
-        protocol: backendUrl.protocol.replace(':', ''),
-        hostname: backendUrl.hostname,
-        port: backendUrl.port,
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
         pathname: '/invitations/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel.app',
+        pathname: '/api/invitations/image/**',
       },
     ],
   },
