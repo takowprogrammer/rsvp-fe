@@ -18,6 +18,25 @@ interface Invitation {
     updatedAt: string;
 }
 
+// Helper function to get the correct image URL
+const getImageUrl = (imageUrl?: string): string => {
+    if (!imageUrl) return '';
+
+    // If it's already an API URL, return as is
+    if (imageUrl.startsWith('/api/invitations/image/')) {
+        return imageUrl;
+    }
+
+    // If it's a static path like /invitations/filename.jpg, convert to API URL
+    if (imageUrl.startsWith('/invitations/')) {
+        const filename = imageUrl.replace('/invitations/', '');
+        return `/api/invitations/image/${filename}`;
+    }
+
+    // For any other format, return as is
+    return imageUrl;
+};
+
 export default function InvitationsPage() {
     const [invitations, setInvitations] = useState<Invitation[]>([]);
     const [loading, setLoading] = useState(true);
@@ -170,7 +189,7 @@ export default function InvitationsPage() {
                                     {/* Invitation Image */}
                                     <div className="relative h-56 overflow-hidden">
                                         <SmartImage
-                                            src={invitation.imageUrl}
+                                            src={getImageUrl(invitation.imageUrl)}
                                             alt={invitation.title}
                                             className="w-full h-full object-cover"
                                             onError={(e) => {

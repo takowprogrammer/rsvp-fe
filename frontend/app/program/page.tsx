@@ -5,24 +5,24 @@ import Image from "next/image";
 export default function ProgramPage() {
   return (
     <div className="min-h-screen bg-dusty-blue-50 font-sans pt-24">
-      
+
       {/* Hero Section */}
-      <div className="relative h-80 md:h-96 bg-gradient-to-b from-dusty-blue-100 to-transparent">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="relative h-72 sm:h-80 md:h-96 bg-gradient-to-b from-dusty-blue-100 to-transparent">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <div className="mb-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-dusty-blue-800 mb-3 font-serif">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dusty-blue-800 mb-3 font-serif">
               Wedding Program
             </h1>
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-dusty-blue-200 shadow-lg">
-              <h2 className="text-xl font-semibold text-dusty-blue-800 mb-4 text-center font-serif italic">Nupitals</h2>
-              <div className="space-y-3 text-base md:text-lg text-dusty-blue-700">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-dusty-blue-200 shadow-lg">
+              <h2 className="text-lg sm:text-xl font-semibold text-dusty-blue-800 mb-3 sm:mb-4 text-center font-serif italic">Nupitals</h2>
+              <div className="space-y-2 sm:space-y-3 text-sm sm:text-base md:text-lg text-dusty-blue-700">
                 <div className="flex items-center justify-center gap-2">
                   <span>📅</span>
                   <span>Saturday, November 29, 2025</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span>📍</span>
-                  <span>Presbyterian Church, Buea Station</span>
+                  <span className="text-xs sm:text-sm md:text-base">Presbyterian Church, Buea Station</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
                   <span>🕐</span>
@@ -37,10 +37,10 @@ export default function ProgramPage() {
       {/* Program Details */}
       <div className="bg-white py-2 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-4 border border-dusty-blue-200 shadow-xl">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-4 border border-dusty-blue-200 shadow-xl">
             <div className="text-center mb-2">
-              <h2 className="text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
-              <p className="text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
+              <p className="text-sm sm:text-base text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
             </div>
 
             <div className="space-y-2">
