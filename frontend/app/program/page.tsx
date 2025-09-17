@@ -1,47 +1,81 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ProgramPage() {
+  const [activeTab, setActiveTab] = useState("rehearsal");
+
+  const tabs = [
+    { id: "rehearsal", label: "Rehearsal Dinner" },
+    { id: "traditional", label: "Traditional Rites" },
+    { id: "civil", label: "Civil Wedding" },
+    { id: "reception", label: "Civil and Traditional Wedding Reception" },
+    { id: "nuptials", label: "Nuptials" },
+  ];
+
   return (
     <div className="min-h-screen bg-dusty-blue-50 font-sans pt-24">
 
-      {/* Hero Section */}
-      <div className="relative h-72 sm:h-80 md:h-96 bg-gradient-to-b from-dusty-blue-100 to-transparent">
+      {/* Page Title */}
+      <div className="bg-gradient-to-b from-dusty-blue-100 to-transparent py-12">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
-          <div className="mb-4">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dusty-blue-800 mb-3 font-serif">
-              Wedding Program
-            </h1>
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-dusty-blue-200 shadow-lg">
-              <h2 className="text-lg sm:text-xl font-semibold text-dusty-blue-800 mb-3 sm:mb-4 text-center font-serif italic">Nupitals</h2>
-              <div className="space-y-2 sm:space-y-3 text-sm sm:text-base md:text-lg text-dusty-blue-700">
-                <div className="flex items-center justify-center gap-2">
-                  <span>📅</span>
-                  <span>Saturday, November 29, 2025</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span>📍</span>
-                  <span className="text-xs sm:text-sm md:text-base">Presbyterian Church, Buea Station</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
-                  <span>🕐</span>
-                  <span>1:00 PM</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dusty-blue-800 font-serif">
+            Wedding Program
+          </h1>
         </div>
       </div>
 
-      {/* Program Details */}
-      <div className="bg-white py-2 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-4 border border-dusty-blue-200 shadow-xl">
-            <div className="text-center mb-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
-              <p className="text-sm sm:text-base text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
+      {/* Tab Navigation */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6 mt-6 sm:mt-8">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 border ${
+                activeTab === tab.id
+                  ? 'text-white bg-gradient-to-r from-dusty-blue-600 to-phoenix-sand-500 border-dusty-blue-600 shadow-lg shadow-dusty-blue-700/20'
+                  : 'bg-white/90 text-dusty-blue-700 hover:bg-dusty-blue-50 border-dusty-blue-300 hover:border-dusty-blue-500'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        {activeTab === "nuptials" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Nuptials</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">Saturday, November 29, 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span>Presbyterian Church, Buea Station</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
+                    <span>🕐</span>
+                    <span className="font-bold">1:00 PM</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Program Details */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-4 border border-dusty-blue-200 shadow-xl">
+              <div className="text-center mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
+                <p className="text-sm sm:text-base text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
+              </div>
 
             <div className="space-y-2">
               {/* Procession */}
@@ -308,47 +342,290 @@ export default function ProgramPage() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Reception Details */}
-      <div className="bg-dusty-blue-50 py-12 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-dusty-blue-200 shadow-2xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-dusty-blue-800 mb-3 font-serif">Reception</h2>
-              <p className="text-dusty-blue-600 font-serif italic">Join us for the after party!</p>
-            </div>
-            <div className="space-y-4 text-lg text-dusty-blue-700">
-              <div className="flex items-center justify-center gap-3">
-                <span>📍</span>
-                <span>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</span>
-              </div>
-              <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
-                <span>🕓</span>
-                <span className="font-bold">6:00 PM</span>
+          {/* Reception Details */}
+          <div className="bg-dusty-blue-50 py-12 px-4 rounded-2xl">
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-dusty-blue-200 shadow-2xl">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-dusty-blue-800 mb-3 font-serif">Reception</h2>
+                  <p className="text-dusty-blue-600 font-serif italic">Join us for the after party!</p>
+                </div>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span><strong>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</strong></span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
+                    <span>🕓</span>
+                    <span className="font-bold">6:00 PM</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+          {/* Note of Thanks */}
+          <div className="bg-white py-12 px-4 rounded-2xl">
+            <div className="max-w-3xl mx-auto text-center">
+              <h3 className="text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">A Note of Thanks</h3>
+              <p className="text-dusty-blue-700 leading-relaxed max-w-2xl mx-auto">
+                We are so grateful to have you here to celebrate with us. Your presence is the greatest gift, and we are so excited to share this special day with our favorite people. Thank you for your love and support.
+              </p>
+            </div>
+          </div>
+          </div>
+        )}
+
+        {activeTab === "rehearsal" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Rehearsal Dinner</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">24th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">3:00 PM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span><strong>Oasis Resort Buea</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Dress Code and Guest Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Event Details</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Dressing Color</h4>
+                    <p className="text-dusty-blue-600 font-medium">All shades of Pink</p>
+                  </div>
+
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Guests Invited</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-dusty-blue-600">
+                      <div className="flex items-center justify-center gap-2">
+                        <span>👰</span>
+                        <span>Bridesmaids</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <span>🤵</span>
+                        <span>Groomsmen</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <span>👭</span>
+                        <span>Friends of the Bride</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <span>👬</span>
+                        <span>Friends of the Groom</span>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-dusty-blue-600">
+                      <span>And a few Family and friends</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
+                    <p className="text-2xl font-bold text-dusty-blue-600">100</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "traditional" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Traditional Rites</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">26th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">5:00 PM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span><strong>Family Residence, Kumba Town</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Dress Code and Guest Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Event Details</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Dressing</h4>
+                    <p className="text-dusty-blue-600 font-medium">Simple Traditional Attire</p>
+                  </div>
+
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Guests Invited</h4>
+                    <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
+                      <span>👨‍👩‍👧‍👦</span>
+                      <span>Family and Close Friends</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
+                    <p className="text-2xl font-bold text-dusty-blue-600">150</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "civil" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Civil Wedding</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">27th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">11:00 AM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span><strong>Kumba 1 Council Hall</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Attire and Guest Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Event Details</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Attire</h4>
+                    <p className="text-dusty-blue-600 font-medium">Upper Class Society Corporate</p>
+                  </div>
+
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Guests Invited</h4>
+                    <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
+                      <span>🌍</span>
+                      <span>Open to all who would love to witness this Moment</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "reception" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Civil and Traditional Wedding Reception</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">27th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">5:00 PM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span><strong>Kumba 1 Council Hall</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Colors and Asoebi Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Color Scheme</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Colors</h4>
+                    <div className="space-y-2 text-dusty-blue-600">
+                      <p className="font-medium">Burnt Orange</p>
+                      <p className="font-medium">Cayenne Orange</p>
+                      <p className="font-medium">All shades of Brown</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Asoebi Available</h4>
+                    <p className="text-dusty-blue-600">There is Asoebi for those who might need</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Third Card - Guest Information */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Guest Information</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Invited Guests</h4>
+                    <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
+                      <span>🎫</span>
+                      <span>On Invitation</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
+                    <p className="text-2xl font-bold text-dusty-blue-600">250</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Note of Thanks */}
-      <div className="bg-white py-12 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">A Note of Thanks</h3>
-          <p className="text-dusty-blue-700 leading-relaxed max-w-2xl mx-auto">
-            We are so grateful to have you here to celebrate with us. Your presence is the greatest gift, and we are so excited to share this special day with our favorite people. Thank you for your love and support.
-          </p>
-        </div>
-      </div>
-
-      {/* Footer Link to Home */}
-      <div className="text-center py-8 bg-dusty-blue-50">
-        <Link href="/" className="text-dusty-blue-600 hover:text-dusty-blue-800 font-semibold transition-colors">
-          Back to Home
-        </Link>
-      </div>
     </div>
   );
 }
