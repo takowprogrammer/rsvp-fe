@@ -4,14 +4,14 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function ProgramPage() {
-  const [activeTab, setActiveTab] = useState("nuptials");
+  const [activeTab, setActiveTab] = useState("rehearsal");
 
   const tabs = [
-    { id: "nuptials", label: "Nuptials" },
     { id: "rehearsal", label: "Rehearsal Dinner" },
     { id: "traditional", label: "Traditional Rites" },
     { id: "civil", label: "Civil Wedding" },
     { id: "reception", label: "Civil and Traditional Wedding Reception" },
+    { id: "nuptials", label: "Nuptials" },
   ];
 
   return (
@@ -354,7 +354,7 @@ export default function ProgramPage() {
                 <div className="space-y-4 text-lg text-dusty-blue-700">
                   <div className="flex items-center justify-center gap-3">
                     <span>📍</span>
-                    <span>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</span>
+                    <span><strong>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</strong></span>
                   </div>
                   <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
                     <span>🕓</span>
@@ -394,7 +394,7 @@ export default function ProgramPage() {
                   </div>
                   <div className="flex items-center justify-center gap-3">
                     <span>📍</span>
-                    <span>Oasis Resort Buea</span>
+                    <span><strong>Oasis Resort Buea</strong></span>
                   </div>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export default function ProgramPage() {
                   </div>
                   <div className="flex items-center justify-center gap-3">
                     <span>📍</span>
-                    <span>Family Residence, Kumba Town</span>
+                    <span><strong>Family Residence, Kumba Town</strong></span>
                   </div>
                 </div>
               </div>
@@ -519,7 +519,7 @@ export default function ProgramPage() {
                   </div>
                   <div className="flex items-center justify-center gap-3">
                     <span>📍</span>
-                    <span>Kumba 1 Council Hall</span>
+                    <span><strong>Kumba 1 Council Hall</strong></span>
                   </div>
                 </div>
               </div>
@@ -568,7 +568,7 @@ export default function ProgramPage() {
                   </div>
                   <div className="flex items-center justify-center gap-3">
                     <span>📍</span>
-                    <span>Kumba 1 Council Hall</span>
+                    <span><strong>Kumba 1 Council Hall</strong></span>
                   </div>
                 </div>
               </div>
