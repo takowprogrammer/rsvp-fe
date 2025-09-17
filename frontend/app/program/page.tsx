@@ -326,7 +326,7 @@ export default function ProgramPage() {
               </div>
               <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
                 <span>🕓</span>
-                <span>4:00 PM</span>
+                <span className="font-bold">6:00 PM</span>
               </div>
             </div>
           </div>
