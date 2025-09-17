@@ -137,18 +137,18 @@ export default function AdminGuestsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 p-3 sm:p-6 md:p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-8">
-                    <div className="flex justify-between items-center">
+                <div className="mb-6 sm:mb-8">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-dusty-blue-600 to-blue-600 bg-clip-text text-transparent">Wedding Guest List</h1>
-                            <p className="text-gray-600 mt-1">View, filter, and search all RSVPs for Doris & Emmanuel's special day.</p>
+                            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-dusty-blue-600 to-blue-600 bg-clip-text text-transparent">Wedding Guest List</h1>
+                            <p className="text-gray-600 mt-1 text-sm sm:text-base">View, filter, and search all RSVPs for Doris & Emmanuel's special day.</p>
                         </div>
                         <div className="flex items-center space-x-3">
                             <Link
                                 href="/admin"
-                                className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 focus:outline-none focus:ring-2 focus:ring-dusty-blue-500 focus:border-dusty-blue-500 transition-colors"
+                                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 focus:outline-none focus:ring-2 focus:ring-dusty-blue-500 focus:border-dusty-blue-500 transition-colors"
                             >
                                 Back to Dashboard
                             </Link>
@@ -162,37 +162,37 @@ export default function AdminGuestsPage() {
                     </div>
                 )}
 
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-                    <div className="p-6 border-b border-dusty-blue-200">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                            <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 sm:mb-8">
+                    <div className="p-4 sm:p-6 border-b border-dusty-blue-200">
+                        <div className="flex flex-col gap-4">
+                            <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
                                 <div className="relative flex-1">
                                     <input
                                         type="text"
                                         placeholder="Search guests..."
                                         value={searchTerm}
                                         onChange={handleSearchChange}
-                                        className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent"
+                                        className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent text-sm sm:text-base"
                                     />
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </div>
                                 </div>
                                 <button
                                     type="submit"
-                                    className="ml-2 px-4 py-2 bg-dusty-blue-600 text-white font-medium rounded-lg shadow hover:bg-dusty-blue-700 transition-colors"
+                                    className="px-4 py-2 bg-dusty-blue-600 text-white font-medium rounded-lg shadow hover:bg-dusty-blue-700 transition-colors text-sm sm:text-base"
                                 >
                                     Search
                                 </button>
                             </form>
 
-                            <div className="w-full md:w-64">
+                            <div className="w-full sm:w-64">
                                 <select
                                     value={selectedGroup}
                                     onChange={handleGroupChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent"
+                                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dusty-blue-500 focus:border-transparent text-sm sm:text-base"
                                 >
                                     <option value="">All Groups</option>
                                     {groups.map(group => (
@@ -205,20 +205,20 @@ export default function AdminGuestsPage() {
 
                     <div className="overflow-x-auto">
                         {guests.length === 0 && !isLoading ? (
-                            <div className="p-8 text-center">
-                                <p className="text-lg text-gray-500">No guests found matching your criteria.</p>
+                            <div className="p-6 sm:p-8 text-center">
+                                <p className="text-base sm:text-lg text-gray-500">No guests found matching your criteria.</p>
                             </div>
                         ) : (
                             <table className="min-w-full divide-y divide-dusty-blue-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">QR Code</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RSVP Date</th>
-                                        <th scope="col" className="relative px-6 py-3">
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Contact</th>
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group</th>
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">QR Code</th>
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">RSVP Date</th>
+                                        <th scope="col" className="relative px-3 sm:px-6 py-3">
                                             <span className="sr-only">Actions</span>
                                         </th>
                                     </tr>
@@ -226,20 +226,29 @@ export default function AdminGuestsPage() {
                                 <tbody className="bg-white divide-y divide-dusty-blue-200">
                                     {guests.map(guest => (
                                         <tr key={guest.id} className="hover:bg-dusty-blue-50/50 transition-colors duration-200">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{guest.firstName} {guest.lastName}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{guest.email}<br />{guest.phone}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{guest.group?.name || 'N/A'}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{guest.qrCode?.alphanumericCode || 'N/A'}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                                <div className="flex flex-col">
+                                                    <div className="text-sm font-medium text-gray-900">{guest.firstName} {guest.lastName}</div>
+                                                    <div className="text-xs text-gray-500 sm:hidden">{guest.email}</div>
+                                                    <div className="text-xs text-gray-500 sm:hidden">{guest.phone}</div>
+                                                </div>
+                                            </td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
+                                                <div className="text-sm text-gray-500">{guest.email}</div>
+                                                <div className="text-sm text-gray-500">{guest.phone}</div>
+                                            </td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-500">{guest.group?.name || 'N/A'}</td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 hidden md:table-cell text-sm text-gray-500 font-mono">{guest.qrCode?.alphanumericCode || 'N/A'}</td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${guest.checkedIn ? 'bg-green-100 text-green-800' : 'bg-dusty-blue-100 text-dusty-blue-800'}`}>
                                                     {guest.checkedIn ? 'Checked-In' : guest.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(guest.createdAt).toLocaleDateString()}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 hidden lg:table-cell text-sm text-gray-500">{new Date(guest.createdAt).toLocaleDateString()}</td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-sm font-medium">
                                                 <button
                                                     onClick={() => handleDelete(guest.id)}
-                                                    className="text-red-600 hover:text-red-900"
+                                                    className="text-red-600 hover:text-red-900 text-xs sm:text-sm"
                                                 >
                                                     Delete
                                                 </button>
@@ -252,21 +261,21 @@ export default function AdminGuestsPage() {
                     </div>
 
                     {/* Pagination Controls */}
-                    <div className="px-6 py-4 border-t border-dusty-blue-200 flex items-center justify-between bg-gradient-to-r from-dusty-blue-50 to-blue-50">
+                    <div className="px-3 sm:px-6 py-3 sm:py-4 border-t border-dusty-blue-200 flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-dusty-blue-50 to-blue-50 gap-3 sm:gap-0">
                         <button
                             onClick={handlePreviousPage}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             Previous
                         </button>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs sm:text-sm text-gray-700">
                             Page {currentPage} of {totalPages}
                         </span>
                         <button
                             onClick={handleNextPage}
                             disabled={currentPage === totalPages || totalPages === 0}
-                            className="px-4 py-2 text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-dusty-blue-700 bg-white border border-dusty-blue-300 rounded-md hover:bg-dusty-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             Next
                         </button>
