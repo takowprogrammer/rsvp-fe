@@ -626,12 +626,6 @@ export default function ProgramPage() {
         )}
       </div>
 
-      {/* Footer Link to Home */}
-      <div className="text-center py-8 bg-dusty-blue-50">
-        <Link href="/" className="text-dusty-blue-600 hover:text-dusty-blue-800 font-semibold transition-colors">
-          Back to Home
-        </Link>
-      </div>
     </div>
   );
 }
