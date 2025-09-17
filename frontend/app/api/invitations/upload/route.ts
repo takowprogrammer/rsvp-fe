@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
         // Forward the request to the backend
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        const backendResponse = await fetch(`${backendUrl}/api/invitations/upload`, {
+        const backendResponse = await fetch(`${backendUrl}/invitations/upload`, {
             method: 'POST',
             body: formData,
         });

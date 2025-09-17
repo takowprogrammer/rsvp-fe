@@ -53,19 +53,13 @@ const getTemplateName = (template: any): string => {
         '';
 };
 
-// Get template image URL safely - use imageUrl from backend
+// Get template image URL safely - use frontend API route
 const getTemplateImageUrl = (template: any): string => {
-    // The backend provides imageUrl like "/invitations/image.png"
-    // We need to use this directly as it should work with the frontend's public folder
-    const imageUrl = getTemplateProperty(template, 'imageUrl') || '';
-    if (imageUrl) {
-        return imageUrl;
-    }
-
-    // Fallback: construct from file name
+    // Get the filename from the template
     const file = getTemplateProperty(template, 'file') || '';
     if (file) {
-        return `/invitations/${file}`;
+        // Use the frontend API route to serve images (which proxies to backend)
+        return `/api/invitations/image/${file}`;
     }
 
     return '';
@@ -221,13 +215,17 @@ export default function NewInvitationPage() {
             }
 
             const formData = new FormData(e.currentTarget);
+            // Get the filename from the selected template
+            const selectedTemplate = templates.find(t => getTemplateName(t) === templateName);
+            const imageFilename = selectedTemplate ? getTemplateProperty(selectedTemplate, 'file') : null;
+
             const invitationData = {
                 title: formData.get('title') as string,
                 message: formData.get('message') as string,
                 templateName: formData.get('templateName') as string,
                 buttonText: formData.get('buttonText') as string,
                 formUrl: formData.get('formUrl') as string,
-                imageUrl: imageUrl || null, // Include the selected imageUrl
+                imageUrl: imageFilename ? `/api/invitations/image/${imageFilename}` : null, // Store the API URL
                 isActive: true
             };
 

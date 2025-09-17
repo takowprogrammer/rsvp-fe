@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const backendUrl = new URL(process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000');
+
 const nextConfig: NextConfig = {
   // Enable static exports for better deployment compatibility
   output: 'standalone',
@@ -11,7 +13,19 @@ const nextConfig: NextConfig = {
   images: {
     // Allow optimized loading for local/public images only
     unoptimized: false,
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/invitations/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel.app',
+        pathname: '/api/invitations/image/**',
+      },
+    ],
   },
 
   // Handle static file serving
