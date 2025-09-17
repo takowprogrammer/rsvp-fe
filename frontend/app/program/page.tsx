@@ -322,7 +322,7 @@ export default function ProgramPage() {
             <div className="space-y-4 text-lg text-dusty-blue-700">
               <div className="flex items-center justify-center gap-3">
                 <span>📍</span>
-                <span>Capitol Hotel, Buea</span>
+                <span>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</span>
               </div>
               <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
                 <span>🕓</span>
