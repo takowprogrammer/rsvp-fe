@@ -14,31 +14,12 @@ export default function ProgramPage() {
   return (
     <div className="min-h-screen bg-dusty-blue-50 font-sans pt-24">
 
-      {/* Hero Section */}
-      <div className="relative h-72 sm:h-80 md:h-96 bg-gradient-to-b from-dusty-blue-100 to-transparent">
+      {/* Page Title */}
+      <div className="bg-gradient-to-b from-dusty-blue-100 to-transparent py-12">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
-          <div className="mb-4">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dusty-blue-800 mb-3 font-serif">
-              Wedding Program
-            </h1>
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-dusty-blue-200 shadow-lg">
-              <h2 className="text-lg sm:text-xl font-semibold text-dusty-blue-800 mb-3 sm:mb-4 text-center font-serif italic">Nupitals</h2>
-              <div className="space-y-2 sm:space-y-3 text-sm sm:text-base md:text-lg text-dusty-blue-700">
-                <div className="flex items-center justify-center gap-2">
-                  <span>📅</span>
-                  <span>Saturday, November 29, 2025</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span>📍</span>
-                  <span className="text-xs sm:text-sm md:text-base">Presbyterian Church, Buea Station</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
-                  <span>🕐</span>
-                  <span>1:00 PM</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dusty-blue-800 font-serif">
+            Wedding Program
+          </h1>
         </div>
       </div>
 
