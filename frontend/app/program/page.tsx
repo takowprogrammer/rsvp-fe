@@ -1,8 +1,16 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ProgramPage() {
+  const [activeTab, setActiveTab] = useState("nuptials");
+
+  const tabs = [
+    { id: "nuptials", label: "Nuptials" },
+    // Future tabs can be added here
+  ];
+
   return (
     <div className="min-h-screen bg-dusty-blue-50 font-sans pt-24">
 
@@ -34,14 +42,56 @@ export default function ProgramPage() {
         </div>
       </div>
 
-      {/* Program Details */}
-      <div className="bg-white py-2 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-4 border border-dusty-blue-200 shadow-xl">
-            <div className="text-center mb-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
-              <p className="text-sm sm:text-base text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
+      {/* Tab Navigation */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6 mt-6 sm:mt-8">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 border ${
+                activeTab === tab.id
+                  ? 'text-white bg-gradient-to-r from-dusty-blue-600 to-phoenix-sand-500 border-dusty-blue-600 shadow-lg shadow-dusty-blue-700/20'
+                  : 'bg-white/90 text-dusty-blue-700 hover:bg-dusty-blue-50 border-dusty-blue-300 hover:border-dusty-blue-500'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        {activeTab === "nuptials" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Nuptials</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">Saturday, November 29, 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span>Presbyterian Church, Buea Station</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
+                    <span>🕐</span>
+                    <span className="font-bold">1:00 PM</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Program Details */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-4 border border-dusty-blue-200 shadow-xl">
+              <div className="text-center mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-1 font-serif">Order of Service</h2>
+                <p className="text-sm sm:text-base text-dusty-blue-600 font-serif italic">Follow along with our wedding ceremony</p>
+              </div>
 
             <div className="space-y-2">
               {/* Procession */}
@@ -308,39 +358,40 @@ export default function ProgramPage() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Reception Details */}
-      <div className="bg-dusty-blue-50 py-12 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-dusty-blue-200 shadow-2xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-dusty-blue-800 mb-3 font-serif">Reception</h2>
-              <p className="text-dusty-blue-600 font-serif italic">Join us for the after party!</p>
-            </div>
-            <div className="space-y-4 text-lg text-dusty-blue-700">
-              <div className="flex items-center justify-center gap-3">
-                <span>📍</span>
-                <span>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</span>
-              </div>
-              <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
-                <span>🕓</span>
-                <span className="font-bold">6:00 PM</span>
+          {/* Reception Details */}
+          <div className="bg-dusty-blue-50 py-12 px-4 rounded-2xl">
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-dusty-blue-200 shadow-2xl">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-dusty-blue-800 mb-3 font-serif">Reception</h2>
+                  <p className="text-dusty-blue-600 font-serif italic">Join us for the after party!</p>
+                </div>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span>Mountain Club, Lawn Tennis Court, Turborg Junction. Buea</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-dusty-blue-600">
+                    <span>🕓</span>
+                    <span className="font-bold">6:00 PM</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Note of Thanks */}
-      <div className="bg-white py-12 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">A Note of Thanks</h3>
-          <p className="text-dusty-blue-700 leading-relaxed max-w-2xl mx-auto">
-            We are so grateful to have you here to celebrate with us. Your presence is the greatest gift, and we are so excited to share this special day with our favorite people. Thank you for your love and support.
-          </p>
-        </div>
+          {/* Note of Thanks */}
+          <div className="bg-white py-12 px-4 rounded-2xl">
+            <div className="max-w-3xl mx-auto text-center">
+              <h3 className="text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">A Note of Thanks</h3>
+              <p className="text-dusty-blue-700 leading-relaxed max-w-2xl mx-auto">
+                We are so grateful to have you here to celebrate with us. Your presence is the greatest gift, and we are so excited to share this special day with our favorite people. Thank you for your love and support.
+              </p>
+            </div>
+          </div>
+          </div>
+        )}
       </div>
 
       {/* Footer Link to Home */}
