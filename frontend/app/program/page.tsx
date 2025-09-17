@@ -9,6 +9,7 @@ export default function ProgramPage() {
   const tabs = [
     { id: "nuptials", label: "Nuptials" },
     { id: "rehearsal", label: "Rehearsal Dinner" },
+    { id: "traditional", label: "Traditional Rites" },
   ];
 
   return (
@@ -438,6 +439,60 @@ export default function ProgramPage() {
                   <div className="text-center pt-4 border-t border-dusty-blue-200">
                     <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
                     <p className="text-2xl font-bold text-dusty-blue-600">100</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "traditional" && (
+          <div className="space-y-6">
+            {/* First Card - Event Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-dusty-blue-800 mb-6 font-serif">Traditional Rites</h2>
+                <div className="space-y-4 text-lg text-dusty-blue-700">
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📅</span>
+                    <span className="font-semibold">26th November 2025</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>🕐</span>
+                    <span className="font-bold">5:00 PM</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>📍</span>
+                    <span>Family Residence, Kumba Town</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Card - Dress Code and Guest Details */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-dusty-blue-200/50">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dusty-blue-800 mb-4 font-serif">Event Details</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Dressing</h4>
+                    <p className="text-dusty-blue-600 font-medium">Simple Traditional Attire</p>
+                  </div>
+
+                  <div className="text-center">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-3">Guests Invited</h4>
+                    <div className="flex items-center justify-center gap-2 text-dusty-blue-600">
+                      <span>👨‍👩‍👧‍👦</span>
+                      <span>Family and Close Friends</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-dusty-blue-200">
+                    <h4 className="text-lg font-semibold text-dusty-blue-700 mb-2">Total Number of Guests</h4>
+                    <p className="text-2xl font-bold text-dusty-blue-600">150</p>
                   </div>
                 </div>
               </div>
