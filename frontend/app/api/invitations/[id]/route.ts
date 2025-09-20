@@ -27,7 +27,8 @@ export async function GET(
 
     const invitation = await res.json();
     return NextResponse.json(invitation);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Something went wrong' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Something went wrong";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

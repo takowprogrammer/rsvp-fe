@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import SmartImage from "@/components/SmartImage";
 
@@ -35,8 +36,8 @@ const InvitationPage: React.FC = () => {
         }
         const data = await res.json();
         setInvitation(data);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -93,7 +94,7 @@ const InvitationPage: React.FC = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Invitation Not Found</h1>
           <p className="text-gray-600 mb-4">{error}</p>
-          <a href="/" className="text-dusty-blue-600 hover:underline">Go to Home</a>
+          <Link href="/" className="text-dusty-blue-600 hover:underline">Go to Home</Link>
         </div>
       </div>
     );
@@ -117,7 +118,7 @@ const InvitationPage: React.FC = () => {
           {/* Header */}
           <div className="bg-gradient-to-r from-dusty-blue-500 to-dusty-blue-600 text-white p-8 text-center">
             <h1 className="text-4xl font-bold mb-2">{invitation.title}</h1>
-            <p className="text-lg opacity-90">You're Invited!</p>
+            <p className="text-lg opacity-90">You&apos;re Invited!</p>
           </div>
 
           {/* Image */}
@@ -163,7 +164,7 @@ const InvitationPage: React.FC = () => {
 
             {/* Additional Info */}
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>We can't wait to celebrate with you! 💕</p>
+              <p>We can&apos;t wait to celebrate with you! 💕</p>
             </div>
           </div>
         </div>

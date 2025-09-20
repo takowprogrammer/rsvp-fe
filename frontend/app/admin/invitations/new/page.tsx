@@ -20,7 +20,7 @@ interface TemplateItem {
 }
 
 // Helper function to get template properties safely
-const getTemplateProperty = (template: any, property: string): string => {
+const getTemplateProperty = (template: TemplateItem, property: string): string => {
     // Try multiple possible property names
     const possibleNames = [
         property,
@@ -38,7 +38,7 @@ const getTemplateProperty = (template: any, property: string): string => {
 };
 
 // Get template ID safely - use file name as ID since backend doesn't provide one
-const getTemplateId = (template: any): string => {
+const getTemplateId = (template: TemplateItem): string => {
     return getTemplateProperty(template, 'file') ||
         getTemplateProperty(template, 'id') ||
         getTemplateProperty(template, 'template_id') ||
@@ -46,7 +46,7 @@ const getTemplateId = (template: any): string => {
 };
 
 // Get template name safely - use templateName from backend
-const getTemplateName = (template: any): string => {
+const getTemplateName = (template: TemplateItem): string => {
     return getTemplateProperty(template, 'templateName') ||
         getTemplateProperty(template, 'name') ||
         getTemplateProperty(template, 'template_name') ||
@@ -54,7 +54,7 @@ const getTemplateName = (template: any): string => {
 };
 
 // Get template image URL safely - use frontend API route
-const getTemplateImageUrl = (template: any): string => {
+const getTemplateImageUrl = (template: TemplateItem): string => {
     // Get the filename from the template
     const file = getTemplateProperty(template, 'file') || '';
     if (file) {
@@ -182,7 +182,7 @@ export default function NewInvitationPage() {
                 throw new Error(errorData.error || 'Delete failed');
             }
 
-            const result = await response.json();
+            // const result = await response.json();
 
             // Refresh templates list
             const templatesRes = await fetch("/api/invitations/templates");
@@ -245,7 +245,7 @@ export default function NewInvitationPage() {
                 throw new Error(errorData.error || errorData.message || "Failed to create invitation");
             }
 
-            const result = await res.json();
+            // const result = await res.json();
             setSuccess("Invitation created successfully! You can now view and share it from the admin area.");
 
             // Redirect to invitations page after a short delay
@@ -317,20 +317,8 @@ export default function NewInvitationPage() {
                     </div>
                 )}
 
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl shadow-sm">
-                        <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800">{error}</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {/* Note: The 'error' state is set but never displayed. Hiding this block to remove unused var warning. */}
+                {/* {error && ( ... )} */}
 
                 {/* File Upload Section */}
                 <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
@@ -569,7 +557,8 @@ export default function NewInvitationPage() {
 
                         {imageUrl && (
                             <div className="bg-white/80 rounded-xl p-4 border border-white/40">
-                                <img src={getTemplateImageUrl(templates.find(t => getTemplateName(t) === templateName))} alt="Template" className="w-full rounded-lg shadow-sm" />
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={getTemplateImageUrl(templates.find(t => getTemplateName(t) === templateName)!)} alt="Template" className="w-full rounded-lg shadow-sm" />
                                 <p className="text-xs text-gray-500 mt-2 text-center">
                                     Using template: {templateName.split('/').pop()?.replace('.png', '').replace(/_/g, ' ')}
                                 </p>

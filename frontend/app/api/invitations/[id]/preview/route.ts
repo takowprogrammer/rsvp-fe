@@ -45,10 +45,11 @@ export async function GET(
                 'Content-Type': 'text/html',
             },
         });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Preview route error:', error);
+        const message = error instanceof Error ? error.message : "Something went wrong";
         return NextResponse.json(
-            { error: error.message || 'Something went wrong' },
+            { error: message },
             { status: 500 }
         );
     }

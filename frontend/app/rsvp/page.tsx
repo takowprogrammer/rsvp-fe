@@ -56,7 +56,7 @@ function RSVPForm() {
   });
   const [groups, setGroups] = useState<GuestGroup[]>([]);
   const [invitation, setInvitation] = useState<Invitation | null>(null);
-  const [loadingInvitation, setLoadingInvitation] = useState(false);
+  // const [loadingInvitation, setLoadingInvitation] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<RSVPResponse | null>(null);
@@ -68,7 +68,7 @@ function RSVPForm() {
     if (!invitationId) return;
 
     const fetchInvitation = async () => {
-      setLoadingInvitation(true);
+      // setLoadingInvitation(true);
       try {
         const response = await fetch(`/api/invitations/${invitationId}`);
         if (response.ok) {
@@ -78,7 +78,7 @@ function RSVPForm() {
       } catch (error) {
         console.error('Failed to fetch invitation:', error);
       } finally {
-        setLoadingInvitation(false);
+        // setLoadingInvitation(false);
       }
     };
 
@@ -181,7 +181,7 @@ function RSVPForm() {
             {countdown !== null && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
                 <p className="text-sm text-amber-800 mb-2">
-                  ⏰ <strong>Redirecting in {countdown} seconds...</strong> You'll be taken to the home page automatically.
+                  ⏰ <strong>Redirecting in {countdown} seconds...</strong> You&apos;ll be taken to the home page automatically.
                 </p>
                 <div className="flex gap-2 justify-center">
                   <button

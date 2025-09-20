@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import SmartImage from '@/components/SmartImage';
@@ -43,6 +43,35 @@ export default function InvitationsPage() {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    const fetchData = useCallback(async (token: string) => {
+        try {
+            // Use the local API endpoint that will forward to the backend
+            const response = await fetch('/api/invitations', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include' // Include cookies in the request
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    router.push('/admin/login');
+                    return;
+                }
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Failed to fetch invitations');
+            }
+
+            const data = await response.json();
+            setInvitations(data);
+            setLoading(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+            setLoading(false);
+        }
+    }, [router]);
+
     useEffect(() => {
         // Get token from cookie instead of localStorage
         const token = document.cookie
@@ -71,36 +100,7 @@ export default function InvitationsPage() {
         }
 
         fetchData(token);
-    }, [router]);
-
-    const fetchData = async (token: string) => {
-        try {
-            // Use the local API endpoint that will forward to the backend
-            const response = await fetch('/api/invitations', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                credentials: 'include' // Include cookies in the request
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-                    router.push('/admin/login');
-                    return;
-                }
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || 'Failed to fetch invitations');
-            }
-
-            const data = await response.json();
-            setInvitations(data);
-            setLoading(false);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred');
-            setLoading(false);
-        }
-    };
+    }, [router, fetchData]);
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this invitation?')) {

@@ -46,7 +46,6 @@ interface ExtendedStats {
 }
 
 export default function AdminDashboard() {
-  const router = useRouter();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [filteredGuests, setFilteredGuests] = useState<Guest[]>([]);
   const [groups, setGroups] = useState<GuestGroup[]>([]);
@@ -152,7 +151,7 @@ export default function AdminDashboard() {
               Wedding Admin Dashboard
             </h1>
             <p className="text-base sm:text-xl md:text-2xl text-dusty-blue-100 max-w-2xl mx-auto px-2">
-              Manage Doris & Emmanuel's special day with elegance and ease
+              Manage Doris & Emmanuel&apos;s special day with elegance and ease
             </p>
           </div>
         </div>

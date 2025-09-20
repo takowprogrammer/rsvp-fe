@@ -20,9 +20,10 @@ export async function POST(req: NextRequest) {
         }
 
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error) {
         console.error('Login API error:', error);
-        return NextResponse.json({ error: error.message || 'Something went wrong' }, { status: 500 });
+        const message = error instanceof Error ? error.message : "Something went wrong";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
 

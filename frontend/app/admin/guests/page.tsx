@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { api } from '../../../lib/api';
-import { logout, getAuthToken } from '../../../lib/auth';
+import { getAuthToken } from '../../../lib/auth';
 
 // Define interfaces for the data structures
 interface GuestGroup {
@@ -143,7 +143,7 @@ export default function AdminGuestsPage() {
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
                             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-dusty-blue-600 to-blue-600 bg-clip-text text-transparent">Wedding Guest List</h1>
-                            <p className="text-gray-600 mt-1 text-sm sm:text-base">View, filter, and search all RSVPs for Doris & Emmanuel's special day.</p>
+                            <p className="text-gray-600 mt-1 text-sm sm:text-base">View, filter, and search all RSVPs for Doris & Emmanuel&apos;s special day.</p>
                         </div>
                         <div className="flex items-center space-x-3">
                             <Link

@@ -30,7 +30,7 @@ export async function GET(
                 'Cache-Control': 'public, max-age=31536000, immutable',
             },
         });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Failed to proxy QR image' }, { status: 500 });
     }
 }

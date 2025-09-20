@@ -175,7 +175,7 @@ export default function GalleryPage() {
                         More Memories Coming Soon!
                     </h2>
                     <p className="text-lg sm:text-xl text-dusty-blue-100 mb-6 sm:mb-8">
-                        We can't wait to add more beautiful photos from our special day.
+                        We can&apos;t wait to add more beautiful photos from our special day.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         <Link
