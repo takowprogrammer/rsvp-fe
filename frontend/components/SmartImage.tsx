@@ -7,7 +7,6 @@ interface SmartImageProps {
     src: string;
     alt: string;
     className?: string;
-    style?: React.CSSProperties;
     onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 
@@ -15,71 +14,27 @@ export default function SmartImage({
     src,
     alt,
     className = '',
-    style = {},
     onError
 }: SmartImageProps) {
-    const [, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
-    const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
+        // Reset error state when the src changes
         if (src) {
-            setImageLoaded(false);
-            setImageError(false);
-            setImageDimensions(null);
+            setIsError(false);
         }
     }, [src]);
 
-    const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        const img = e.target as HTMLImageElement;
-        setImageDimensions({
-            width: img.naturalWidth,
-            height: img.naturalHeight
-        });
-        setImageLoaded(true);
-    };
-
     const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        setImageError(true);
+        setIsError(true);
         if (onError) {
             onError(e);
         }
     };
 
-    // Determine optimal object position based on image dimensions
-    const getOptimalObjectPosition = () => {
-        if (!imageDimensions) return 'center 30%';
-
-        const { width, height } = imageDimensions;
-        const aspectRatio = width / height;
-
-        // For portrait images (taller than wide), focus on upper portion
-        if (aspectRatio < 0.8) {
-            return 'center 25%';
-        }
-        // For square images, center focus
-        else if (aspectRatio >= 0.8 && aspectRatio <= 1.2) {
-            return 'center 35%';
-        }
-        // For landscape images, focus on center
-        else {
-            return 'center 40%';
-        }
-    };
-
-    // Don't render anything if src is empty or if there's an error
-    if (!src || src.trim() === '' || imageError) {
-        return (
-            <PlaceholderImage
-                className={className}
-                alt={alt}
-            />
-        );
-    }
-
     return (
         <div className={`smart-image-container ${className}`}>
-            {(!src || imageError) ? (
+            {(!src || isError) ? (
                 <PlaceholderImage alt={alt} />
             ) : (
                 // eslint-disable-next-line @next/next/no-img-element

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 export default function InvitationRevealPage() {
@@ -52,9 +53,9 @@ export default function InvitationRevealPage() {
                 <div className="text-center p-8">
                     <h1 className="text-2xl font-bold text-red-600 mb-4">Oops! Something went wrong.</h1>
                     <p className="text-gray-600 mb-6">{error}</p>
-                    <a href="/" className="px-6 py-2 bg-dusty-blue-600 text-white rounded-lg hover:bg-dusty-blue-700 transition-colors">
+                    <Link href="/" className="px-6 py-2 bg-dusty-blue-600 text-white rounded-lg hover:bg-dusty-blue-700 transition-colors">
                         Go to Homepage
-                    </a>
+                    </Link>
                 </div>
             </div>
         );

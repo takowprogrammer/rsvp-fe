@@ -17,8 +17,8 @@ interface TemplateItem {
     template_name?: string;
     image_url?: string;
     file?: string;
-    // Add index signature to allow dynamic property access
-    [key: string]: any;
+    // Stricter index signature to avoid 'any' type
+    [key: string]: string | boolean | undefined;
 }
 
 // Helper function to get template properties safely
@@ -116,7 +116,7 @@ export default function NewInvitationPage() {
                 } else {
                     setTemplatesError(`Failed to load templates: ${res.status} ${res.statusText}`);
                 }
-            } catch (error) {
+            } catch { // error variable is unused
                 setTemplatesError('Failed to load templates. Please try refreshing the page.');
             } finally {
                 setTemplatesLoading(false);
