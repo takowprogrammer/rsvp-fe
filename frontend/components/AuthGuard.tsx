@@ -63,7 +63,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 }
 
 // Helper function to navigate to public routes from admin pages
-export const navigateToPublicRoute = (router: any, path: string) => {
+export const navigateToPublicRoute = (router: { push: (p: string) => void }, path: string) => {
     // Clear admin authentication for public routes
     if (typeof window !== 'undefined') {
         // Clear the admin token cookie when going to public routes

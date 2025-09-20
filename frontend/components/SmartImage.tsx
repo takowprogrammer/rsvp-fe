@@ -18,7 +18,7 @@ export default function SmartImage({
     style = {},
     onError
 }: SmartImageProps) {
-    const [imageLoaded, setImageLoaded] = useState(false);
+    const [, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
     const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
 

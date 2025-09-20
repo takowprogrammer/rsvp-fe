@@ -212,7 +212,7 @@ export default function WeddingPartyPage() {
             Thank You to Our Wedding Party!
           </h2>
           <p className="text-lg sm:text-xl text-dusty-blue-100 mb-6 sm:mb-8">
-            We're so grateful to have such wonderful people by our side on our special day.
+            We&apos;re so grateful to have such wonderful people by our side on our special day.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
