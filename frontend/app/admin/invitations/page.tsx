@@ -138,9 +138,8 @@ export default function InvitationsPage() {
     };
 
     const shareViaWhatsApp = (invitation: Invitation) => {
-        // The URL should now point to the envelope reveal page
-        const invitationUrl = `${window.location.origin}/invite/${invitation.id}/reveal`;
-        // Instead of opening WhatsApp, open the invitation URL directly in a new tab
+        // This should open the direct invitation link, same as the "Preview" button.
+        const invitationUrl = `${window.location.origin}/invite/${invitation.id}`;
         window.open(invitationUrl, '_blank');
     };
 
