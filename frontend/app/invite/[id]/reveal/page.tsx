@@ -1,42 +1,45 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function InvitationRevealPage() {
     const params = useParams();
     const { id } = params;
-    const [htmlContent, setHtmlContent] = useState('');
-    const [loading, setLoading] = useState(true);
+    // We no longer need to fetch the HTML content here,
+    // as the iframe will handle it directly.
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!id) return;
-
-        const fetchInvitationHtml = async () => {
-            setLoading(true);
-            try {
-                // Use the new API route that proxies the backend HTML
-                const response = await fetch(`/api/invitations/${id}/reveal`);
-
-                if (!response.ok) {
-                    throw new Error('Failed to load invitation. It might not exist or has been removed.');
+        if (id) {
+            // Check if the invitation exists before setting the iframe src
+            const verifyInvitation = async () => {
+                try {
+                    // We can just hit the reveal endpoint and check for a 200 OK
+                    const response = await fetch(`/api/invitations/${id}/reveal`);
+                    if (!response.ok) {
+                        throw new Error('Invitation not found or an error occurred.');
+                    }
+                    // If it's okay, set the source for the iframe
+                    setIframeSrc(`/api/invitations/${id}/reveal`);
+                } catch (err) {
+                    setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+                } finally {
+                    setIsLoading(false);
                 }
-
-                const html = await response.text();
-                setHtmlContent(html);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchInvitationHtml();
+            };
+            verifyInvitation();
+        } else {
+            setIsLoading(false);
+            setError("No invitation ID provided.");
+        }
     }, [id]);
 
-    if (loading) {
+
+    if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50">
                 <div className="text-center">
@@ -61,8 +64,20 @@ export default function InvitationRevealPage() {
         );
     }
 
-    // Render the HTML content fetched from the backend
+    // Render an iframe that securely loads the envelope HTML.
+    // This ensures all scripts and styles are executed correctly.
     return (
-        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        <iframe
+            src={iframeSrc || ''}
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none'
+            }}
+            title="Invitation Envelope"
+        />
     );
 }
