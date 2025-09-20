@@ -9,7 +9,6 @@ interface SmartImageProps {
     className?: string;
     style?: React.CSSProperties;
     onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
-    fallbackSrc?: string;
 }
 
 export default function SmartImage({
@@ -17,8 +16,7 @@ export default function SmartImage({
     alt,
     className = '',
     style = {},
-    onError,
-    fallbackSrc = '/placeholder-image.png'
+    onError
 }: SmartImageProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);

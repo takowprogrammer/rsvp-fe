@@ -25,11 +25,11 @@ export const api = {
 
             const data = await res.json();
             return data;
-        } catch (error) {
+        } catch {
             throw new Error('Failed to fetch data');
         }
     },
-    post: async (url: string, data: any) => {
+    post: async (url: string, data: unknown) => {
         const token = getCookie('admin_token');
         const headers: HeadersInit = { 'Content-Type': 'application/json' };
         if (token) {
@@ -41,7 +41,7 @@ export const api = {
             body: JSON.stringify(data),
         });
         if (!res.ok) {
-            const errorData = await res.json();
+            const errorData = await res.json().catch(() => ({ message: 'API request failed' }));
             throw new Error(errorData.message || 'API request failed');
         }
         return res.json();

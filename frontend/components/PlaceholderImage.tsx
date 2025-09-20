@@ -5,7 +5,10 @@ interface PlaceholderImageProps {
 
 export default function PlaceholderImage({ className = '', alt = 'Image placeholder' }: PlaceholderImageProps) {
     return (
-        <div className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center ${className}`}>
+        <div
+            className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center ${className}`}
+            aria-label={alt}
+        >
             <div className="text-center text-gray-400">
                 <svg
                     className="w-12 h-12 mx-auto mb-2"
