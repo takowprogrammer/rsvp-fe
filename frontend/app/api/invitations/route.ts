@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+    console.log("DELETE request received at /api/invitations");
     const authHeader = req.headers.get('authorization');
     const url = new URL(req.url);
     const id = url.searchParams.get('id');

@@ -137,6 +137,13 @@ export default function InvitationsPage() {
         }
     };
 
+    const shareViaWhatsApp = (invitation: Invitation) => {
+        const invitationUrl = `${window.location.origin}/invite/${invitation.id}`;
+        const message = `🎉 ${invitation.title}\n\n${invitation.message}\n\nClick here to RSVP: ${invitationUrl}\n\nWe can't wait to celebrate with you! 💕`;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
     return (
         <>
             {/* Loading state */}
@@ -220,6 +227,13 @@ export default function InvitationsPage() {
                                         </div>
 
                                         <div className="flex gap-1 justify-end">
+                                            <button
+                                                onClick={() => shareViaWhatsApp(invitation)}
+                                                className="bg-green-500 hover:bg-green-600 text-white text-xs font-medium py-0.5 px-2 rounded-sm transition-colors duration-200"
+                                                title="Share via WhatsApp"
+                                            >
+                                                📱 Share
+                                            </button>
                                             <Link
                                                 href={`/invitation/${invitation.id}`}
                                                 target="_blank"

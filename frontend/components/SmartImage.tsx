@@ -69,7 +69,8 @@ export default function SmartImage({
         }
     };
 
-    if (imageError) {
+    // Don't render anything if src is empty or if there's an error
+    if (!src || src.trim() === '' || imageError) {
         return (
             <PlaceholderImage
                 className={className}

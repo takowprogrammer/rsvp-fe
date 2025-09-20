@@ -1,53 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBackendEndpoint } from '@/config/environment';
+import { getBackendEndpoint } from '@/config/backend';
 
 export async function GET(
-    request: NextRequest,
+    req: NextRequest,
     { params }: { params: Promise<{ filename: string }> }
 ) {
-    try {
-        const { filename } = await params;
+    const { filename } = await params;
+    console.log(`[Image Proxy] Received request for filename: ${filename}`);
 
-        if (!filename) {
-            return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
+    try {
+        // Security check - only allow certain file extensions
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const fileExtension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
+
+        if (!allowedExtensions.includes(fileExtension)) {
+            return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
         }
 
-        // Construct the backend URL for the image
-        const backendUrl = getBackendEndpoint(`/invitations/image/${filename}`);
+        const authHeader = req.headers.get('authorization');
+        const imageUrl = getBackendEndpoint(`/invitations/image/${filename}`);
+        console.log(`[Image Proxy] Fetching from backend URL: ${imageUrl}`);
 
         // Fetch the image from the backend
-        const response = await fetch(backendUrl, {
-            method: 'GET',
+        const response = await fetch(imageUrl, {
             headers: {
-                'Accept': 'image/*',
+                ...(authHeader ? { Authorization: authHeader } : {}),
             },
-            signal: AbortSignal.timeout(10000), // 10 second timeout
         });
 
+        console.log(`[Image Proxy] Backend response status: ${response.status}`);
+
         if (!response.ok) {
-            return NextResponse.json(
-                { error: `Backend responded with status: ${response.status}` },
-                { status: response.status }
-            );
+            return NextResponse.json({ error: 'Image not found' }, { status: 404 });
         }
 
-        // Get the image data
         const imageBuffer = await response.arrayBuffer();
         const contentType = response.headers.get('content-type') || 'image/jpeg';
 
-        // Return the image with proper headers
         return new NextResponse(imageBuffer, {
-            status: 200,
             headers: {
                 'Content-Type': contentType,
-                'Cache-Control': 'public, max-age=31536000, immutable',
+                'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
             },
         });
     } catch (error) {
-        console.error('Error fetching image from backend:', error);
-        return NextResponse.json(
-            { error: 'Failed to fetch image' },
-            { status: 500 }
-        );
+        console.error('Error serving image:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
