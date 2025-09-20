@@ -138,8 +138,8 @@ export default function InvitationsPage() {
     };
 
     const shareViaWhatsApp = (invitation: Invitation) => {
-        // The link shared via WhatsApp MUST be the envelope page
-        const invitationUrl = `${window.location.origin}/invite/${invitation.id}/reveal`;
+        // The link shared via WhatsApp should be the same as the preview link
+        const invitationUrl = `${window.location.origin}/invitation/${invitation.id}`;
         const message = `🎉 You're invited to ${invitation.title}!\n\nClick the link to open your personal invitation: ${invitationUrl}`;
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
@@ -236,7 +236,7 @@ export default function InvitationsPage() {
                                                 📱 Share
                                             </button>
                                             <Link
-                                                href={`/invite/${invitation.id}/reveal`}
+                                                href={`/invitation/${invitation.id}`}
                                                 target="_blank"
                                                 className="bg-dusty-blue-500 hover:bg-dusty-blue-600 text-white text-xs font-medium py-0.5 px-2 rounded-sm transition-colors duration-200 text-center"
                                             >
