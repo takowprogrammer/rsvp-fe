@@ -3,9 +3,9 @@ import { getBackendEndpoint } from '@/config/backend';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = params;
+    const { id } = await params;
     const authHeader = req.headers.get('authorization');
 
     try {
