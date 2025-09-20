@@ -78,18 +78,18 @@ export default function SmartImage({
     }
 
     return (
-        <img
-            src={src}
-            alt={alt}
-            className={className}
-            style={{
-                ...style,
-                objectPosition: getOptimalObjectPosition(),
-                minHeight: '100%',
-                minWidth: '100%'
-            }}
-            onLoad={handleLoad}
-            onError={handleError}
-        />
+        <div className={`smart-image-container ${className}`}>
+            {(!src || imageError) ? (
+                <PlaceholderImage alt={alt} />
+            ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={src}
+                    alt={alt}
+                    className="w-full h-full object-cover"
+                    onError={handleError}
+                />
+            )}
+        </div>
     );
 }

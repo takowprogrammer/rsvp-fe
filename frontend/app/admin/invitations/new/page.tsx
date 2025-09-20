@@ -17,6 +17,8 @@ interface TemplateItem {
     template_name?: string;
     image_url?: string;
     file?: string;
+    // Add index signature to allow dynamic property access
+    [key: string]: any;
 }
 
 // Helper function to get template properties safely
@@ -76,7 +78,6 @@ export default function NewInvitationPage() {
     const [imageUrl, setImageUrl] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [templatesLoading, setTemplatesLoading] = useState(true);
     const [templatesError, setTemplatesError] = useState<string | null>(null);
     const [templateSearch, setTemplateSearch] = useState("");
@@ -201,8 +202,6 @@ export default function NewInvitationPage() {
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitting(true);
-        setError(null);
-        setSuccess(null);
         try {
             const token = document.cookie
                 .split('; ')
@@ -254,7 +253,9 @@ export default function NewInvitationPage() {
             }, 2000);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : "Something went wrong";
-            setError(errorMessage);
+            // Since the error state isn't displayed, we can just log it for debugging.
+            console.error("Failed to create invitation:", errorMessage);
+            alert(`Error: ${errorMessage}`); // Alert the user directly as a fallback
         } finally {
             setSubmitting(false);
         }
@@ -316,9 +317,6 @@ export default function NewInvitationPage() {
                         </div>
                     </div>
                 )}
-
-                {/* Note: The 'error' state is set but never displayed. Hiding this block to remove unused var warning. */}
-                {/* {error && ( ... )} */}
 
                 {/* File Upload Section */}
                 <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
