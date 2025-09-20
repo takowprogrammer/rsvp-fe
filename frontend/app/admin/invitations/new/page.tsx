@@ -31,8 +31,10 @@ const getTemplateProperty = (template: TemplateItem, property: string): string =
     ];
 
     for (const name of possibleNames) {
-        if (template[name] !== undefined && template[name] !== null && template[name] !== '') {
-            return template[name];
+        const value = template[name];
+        // Ensure the value is a string before returning it
+        if (typeof value === 'string' && value !== '') {
+            return value;
         }
     }
 
