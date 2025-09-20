@@ -138,8 +138,9 @@ export default function InvitationsPage() {
     };
 
     const shareViaWhatsApp = (invitation: Invitation) => {
-        const invitationUrl = `${window.location.origin}/invite/${invitation.id}`;
-        const message = `🎉 ${invitation.title}\n\n${invitation.message}\n\nClick here to RSVP: ${invitationUrl}\n\nWe can't wait to celebrate with you! 💕`;
+        // The URL should now point to the envelope reveal page
+        const invitationUrl = `${window.location.origin}/invite/${invitation.id}/reveal`;
+        const message = `🎉 ${invitation.title}\n\nYou're invited!\n\nClick the link to open your personal invitation: ${invitationUrl}`;
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
