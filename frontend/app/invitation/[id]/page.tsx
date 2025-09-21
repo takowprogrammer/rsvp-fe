@@ -47,6 +47,14 @@ function InvitationContent() {
   const [error, setError] = useState<string>('');
   const [showFullImage, setShowFullImage] = useState(false);
 
+  // Debug: Log image URL when it changes
+  useEffect(() => {
+    if (invitation?.imageUrl) {
+      console.log('Image URL:', invitation.imageUrl);
+      console.log('Processed URL:', getImageUrl(invitation.imageUrl));
+    }
+  }, [invitation?.imageUrl]);
+
   // Handle escape key to close full image
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -133,18 +141,19 @@ function InvitationContent() {
       {/* Full Image Overlay */}
       {showFullImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2"
           onClick={() => setShowFullImage(false)}
         >
           <div
-            className="relative max-w-4xl max-h-[95vh] mx-4"
+            className="relative w-full h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative rounded-2xl overflow-visible shadow-2xl border-4 border-white bg-white">
-              <SmartImage
+            <div className="relative max-w-[95vw] max-h-[95vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-white flex items-center justify-center">
+              <img
                 src={getImageUrl(invitation.imageUrl) || '/placeholder-image.png'}
                 alt="Invitation"
-                className="w-full h-auto object-cover max-h-[85vh]"
+                className="max-w-full max-h-full object-contain"
+                style={{ maxHeight: '90vh', maxWidth: '90vw' }}
               />
 
               {/* Close button */}
@@ -159,7 +168,7 @@ function InvitationContent() {
               </button>
 
               {/* RSVP button overlay on image */}
-              <div className="absolute inset-x-0 -bottom-4 flex justify-center">
+              <div className="absolute inset-x-0 bottom-4 flex justify-center z-10">
                 <Link
                   href={`/rsvp?invitation=${invitation.id}`}
                   className="bg-gradient-to-r from-dusty-blue-600 to-dusty-blue-700 text-white px-6 py-3 rounded-full text-sm font-semibold hover:from-dusty-blue-700 hover:to-dusty-blue-800 transform hover:scale-105 transition-all duration-300 shadow-xl border-2 border-white/40"
