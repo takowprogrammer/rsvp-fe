@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
-import SmartImage from '@/components/SmartImage';
 import InvitationClient from './InvitationClient';
 
 interface Invitation {
@@ -17,10 +15,11 @@ interface Invitation {
 }
 
 // Generate metadata for link previews
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
+    const { id } = await params;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-    const response = await fetch(`${backendUrl}/api/invitations/${params.id}`, {
+    const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });
 
@@ -47,7 +46,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
     const previewImage = getImageUrl(invitation.imageUrl);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const invitationUrl = `${siteUrl}/invitation/${params.id}`;
+    const invitationUrl = `${siteUrl}/invitation/${id}`;
 
     return {
       title: `Wedding Invitation - Doris & Emmanuel`,
@@ -85,13 +84,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 // Server-side component that fetches invitation data
-export default async function InvitationPage({ params }: { params: { id: string } }) {
+export default async function InvitationPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   let invitation: Invitation | null = null;
   let error: string | null = null;
 
   try {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-    const response = await fetch(`${backendUrl}/api/invitations/${params.id}`, {
+    const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });
 
@@ -106,26 +106,26 @@ export default async function InvitationPage({ params }: { params: { id: string 
     }
   } catch (err) {
     error = err instanceof Error ? err.message : 'Something went wrong';
+}
+
+// Helper function to get the correct image URL
+const getImageUrl = (imageUrl?: string): string => {
+  if (!imageUrl) return '';
+
+  // If it's already an API URL, return as is
+  if (imageUrl.startsWith('/api/invitations/image/')) {
+    return imageUrl;
   }
 
-  // Helper function to get the correct image URL
-  const getImageUrl = (imageUrl?: string): string => {
-    if (!imageUrl) return '';
+  // If it's a static path like /invitations/filename.jpg, convert to API URL
+  if (imageUrl.startsWith('/invitations/')) {
+    const filename = imageUrl.replace('/invitations/', '');
+    return `/api/invitations/image/${filename}`;
+  }
 
-    // If it's already an API URL, return as is
-    if (imageUrl.startsWith('/api/invitations/image/')) {
-      return imageUrl;
-    }
-
-    // If it's a static path like /invitations/filename.jpg, convert to API URL
-    if (imageUrl.startsWith('/invitations/')) {
-      const filename = imageUrl.replace('/invitations/', '');
-      return `/api/invitations/image/${filename}`;
-    }
-
-    // For any other format, return as is
-    return imageUrl;
-  };
+  // For any other format, return as is
+  return imageUrl;
+};
 
   return (
     <InvitationClient

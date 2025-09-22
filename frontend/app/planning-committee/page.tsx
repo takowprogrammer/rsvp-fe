@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -83,7 +82,7 @@ export default function PlanningCommitteePage() {
 
                     {/* Committee Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                        {committeeMembers.map((member, index) => (
+                            {committeeMembers.map((member) => (
                             <div
                                 key={member.name}
                                 className="group bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-4 sm:p-6 hover:shadow-lg transition-all duration-300"

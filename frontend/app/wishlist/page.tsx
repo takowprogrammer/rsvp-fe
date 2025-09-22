@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import "yet-another-react-lightbox/styles.css";
 import Lightbox from "yet-another-react-lightbox";
