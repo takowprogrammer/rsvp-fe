@@ -16,15 +16,69 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-b border-dusty-blue-200/40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="h-16 flex items-center justify-between">
-          <Link href="/" className="px-3 py-2 rounded-md text-dusty-blue-700 font-semibold bg-dusty-blue-50 ring-1 ring-dusty-blue-200 text-sm sm:text-base">Home</Link>
+          <Link 
+            href="/" 
+            className={`px-3 py-2 rounded-md font-semibold text-sm sm:text-base transition-colors ${
+              pathname === '/' 
+                ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                : 'text-dusty-blue-700 bg-dusty-blue-50 ring-1 ring-dusty-blue-200'
+            }`}
+          >
+            Home
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4 lg:gap-6">
-            <Link href="/gallery" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Gallery</Link>
-            <Link href="/wedding-party" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wedding Party</Link>
-            <Link href="/planning-committee" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Planning Committee</Link>
-            <Link href="/program" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Program</Link>
-            <Link href="/wishlist" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wishlist</Link>
+            <Link 
+              href="/gallery" 
+              className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
+                pathname === '/gallery' 
+                  ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                  : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+              }`}
+            >
+              Gallery
+            </Link>
+            <Link 
+              href="/wedding-party" 
+              className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
+                pathname === '/wedding-party' 
+                  ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                  : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+              }`}
+            >
+              Wedding Party
+            </Link>
+            <Link 
+              href="/planning-committee" 
+              className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
+                pathname === '/planning-committee' 
+                  ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                  : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+              }`}
+            >
+              Planning Committee
+            </Link>
+            <Link 
+              href="/program" 
+              className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
+                pathname === '/program' 
+                  ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                  : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+              }`}
+            >
+              Program
+            </Link>
+            <Link 
+              href="/wishlist" 
+              className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
+                pathname === '/wishlist' 
+                  ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                  : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+              }`}
+            >
+              Wishlist
+            </Link>
             <Link href="/admin/login" className="btn-primary transition text-sm lg:text-base">Login</Link>
           </div>
 
@@ -50,35 +104,55 @@ export default function Navbar() {
             <div className="px-4 py-4 space-y-2">
               <Link
                 href="/gallery"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                className={`block px-3 py-2 rounded-md transition-colors font-medium ${
+                  pathname === '/gallery' 
+                    ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                    : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Gallery
               </Link>
               <Link
                 href="/wedding-party"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                className={`block px-3 py-2 rounded-md transition-colors font-medium ${
+                  pathname === '/wedding-party' 
+                    ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                    : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Wedding Party
               </Link>
               <Link
                 href="/planning-committee"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                className={`block px-3 py-2 rounded-md transition-colors font-medium ${
+                  pathname === '/planning-committee' 
+                    ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                    : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Planning Committee
               </Link>
               <Link
                 href="/program"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                className={`block px-3 py-2 rounded-md transition-colors font-medium ${
+                  pathname === '/program' 
+                    ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                    : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Program
               </Link>
               <Link
                 href="/wishlist"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                className={`block px-3 py-2 rounded-md transition-colors font-medium ${
+                  pathname === '/wishlist' 
+                    ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
+                    : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Wishlist

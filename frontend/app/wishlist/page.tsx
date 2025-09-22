@@ -232,6 +232,7 @@ export default function WishlistPage() {
           fill
           priority
           className="object-cover"
+          style={{ objectPosition: 'center 30%' }}
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
