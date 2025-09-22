@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import SmartImage from '@/components/SmartImage';
+import Image from 'next/image';
 
 interface Invitation {
   id: string;
@@ -187,7 +187,7 @@ export default function InvitationClient({ invitation, error, getImageUrl }: Inv
                 {invitation.imageUrl && (
                   <div className="mb-6 sm:mb-8">
                     <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 rounded-2xl overflow-hidden shadow-lg">
-                      <SmartImage
+                      <Image
                         src={getImageUrl(invitation.imageUrl)}
                         alt={invitation.title}
                         fill
