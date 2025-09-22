@@ -48,11 +48,11 @@ export default function PlanningCommitteePage() {
             {/* Hero Section */}
             <div className="relative h-screen w-full">
                 <Image
-                    src="/photos/gallery/IMG_6474.JPG"
+                    src="/photos/gallery/IMG-20250905-WA0008.jpg"
                     alt="Planning Committee"
                     fill
                     className="object-cover"
-                    style={{ objectPosition: 'center 30%' }}
+                    style={{ objectPosition: 'center 40%' }}
                     priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
