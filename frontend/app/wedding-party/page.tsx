@@ -210,7 +210,7 @@ export default function WeddingPartyPage() {
       <div className="py-12 sm:py-16 bg-gradient-to-r from-dusty-blue-600 via-phoenix-sand-500 to-dusty-blue-700">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
-            Thank You to Our Wedding Party!
+            We are grateful to you all for your Support
           </h2>
           <p className="text-lg sm:text-xl text-dusty-blue-100 mb-6 sm:mb-8">
             We&apos;re so grateful to have such wonderful people by our side on our special day.
