@@ -14,20 +14,54 @@ export default function Home() {
     "/photos/crop-slide/crop8.jpg",
   ];
 
-  const objectPositions = [
-    "center top", // For crop1.jpg - show heads at top
-    "center top", // For crop2.jpg - show heads at top
-    "center top", // For crop3.jpg - show heads at top
-    "center top", // For crop4.jpg - show heads at top
-    "center top", // For crop5.jpg - show heads at top
-    "center top", // For crop6.jpg - show heads at top
-    "center top", // For crop8.jpg - show heads at top
-  ];
+  // Responsive object positions for different orientations
+  const getObjectPosition = (idx: number, isPortrait: boolean) => {
+    const basePositions = [
+      "center top", // For crop1.jpg - show heads at top
+      "center top", // For crop2.jpg - show heads at top
+      "center top", // For crop3.jpg - show heads at top
+      "center top", // For crop4.jpg - show heads at top
+      "center top", // For crop5.jpg - show heads at top
+      "center top", // For crop6.jpg - show heads at top
+      "center top", // For crop8.jpg - show heads at top
+    ];
+
+    if (isPortrait) {
+      // In portrait mode, adjust positioning for better mobile display
+      return "center center";
+    }
+
+    return basePositions[idx] || "center";
+  };
 
   const [current, setCurrent] = useState(0);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Handle orientation and screen size detection
+  useEffect(() => {
+    const checkOrientation = () => {
+      const isPortraitMode = window.innerHeight > window.innerWidth;
+      const isMobileDevice = window.innerWidth < 768;
+      setIsPortrait(isPortraitMode);
+      setIsMobile(isMobileDevice);
+    };
+
+    // Check on mount
+    checkOrientation();
+
+    // Listen for orientation changes
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -149,16 +183,22 @@ export default function Home() {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
               }`}
           >
-            <div className="relative w-full h-full">
+            <div className={`relative w-full h-full ${isMobile && isPortrait ? "bg-gradient-to-br from-rose-100 via-gray-100 to-rose-200" : ""
+              }`}>
               <Image
                 src={src}
                 alt="Wedding invitation background"
                 fill
-                className="object-cover transition-transform duration-[20000ms] ease-linear hover:scale-105"
-                style={{ objectPosition: objectPositions[idx] || "center" }}
+                className={`transition-transform duration-[20000ms] ease-linear hover:scale-105 ${isMobile && isPortrait
+                    ? "object-contain"
+                    : "object-cover"
+                  }`}
+                style={{
+                  objectPosition: getObjectPosition(idx, isPortrait && isMobile)
+                }}
                 priority={idx === 0}
-                quality={90}
-                sizes="100vw"
+                quality={isMobile ? 75 : 90}
+                sizes={isMobile ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
                 onLoad={() => idx === 0 && setImagesLoaded(true)}
               />
             </div>
