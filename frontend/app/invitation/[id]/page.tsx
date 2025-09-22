@@ -32,16 +32,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 
     const invitation: Invitation = await response.json();
-    
+
     // Get the image URL for the preview
     const getImageUrl = (imageUrl?: string): string => {
       if (!imageUrl) return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/photos/gallery/IMG-20250905-WA0021.jpg`;
-      
+
       if (imageUrl.startsWith('/invitations/')) {
         const filename = imageUrl.replace('/invitations/', '');
         return `${backendUrl}/api/invitations/image/${filename}`;
       }
-      
+
       return imageUrl;
     };
 
@@ -128,9 +128,9 @@ export default async function InvitationPage({ params }: { params: { id: string 
   };
 
   return (
-    <InvitationClient 
-      invitation={invitation} 
-      error={error} 
+    <InvitationClient
+      invitation={invitation}
+      error={error}
       getImageUrl={getImageUrl}
     />
   );
