@@ -27,11 +27,16 @@ export default function Home() {
     ];
 
     if (isPortrait) {
-      // In portrait mode, adjust positioning for better mobile display
+      // In portrait mode, use center positioning to show the most important part
       return "center center";
     }
 
     return basePositions[idx] || "center";
+  };
+
+  // Get object fit based on orientation - always use object-cover to fill the container
+  const getObjectFit = () => {
+    return "object-cover";
   };
 
   const [current, setCurrent] = useState(0);
@@ -166,7 +171,13 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative h-screen overflow-hidden" style={{ marginTop: "80px" }}>
+      <div
+        className="relative h-screen overflow-hidden"
+        style={{
+          marginTop: "80px",
+          minHeight: "100vh"
+        }}
+      >
         {/* Loading indicator */}
         {!imagesLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-rose-100 via-gray-100 to-rose-200 flex items-center justify-center z-30">
@@ -183,16 +194,12 @@ export default function Home() {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
               }`}
           >
-            <div className={`relative w-full h-full ${isMobile && isPortrait ? "bg-gradient-to-br from-rose-100 via-gray-100 to-rose-200" : ""
-              }`}>
+            <div className="relative w-full h-full min-h-full">
               <Image
                 src={src}
                 alt="Wedding invitation background"
                 fill
-                className={`transition-transform duration-[20000ms] ease-linear hover:scale-105 ${isMobile && isPortrait
-                    ? "object-contain"
-                    : "object-cover"
-                  }`}
+                className={`transition-transform duration-[20000ms] ease-linear hover:scale-105 ${getObjectFit()}`}
                 style={{
                   objectPosition: getObjectPosition(idx, isPortrait && isMobile)
                 }}
