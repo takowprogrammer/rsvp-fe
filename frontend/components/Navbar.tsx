@@ -22,6 +22,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4 lg:gap-6">
             <Link href="/gallery" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Gallery</Link>
             <Link href="/wedding-party" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wedding Party</Link>
+            <Link href="/planning-committee" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Planning Committee</Link>
             <Link href="/program" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Program</Link>
             <Link href="/wishlist" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wishlist</Link>
             <Link href="/admin/login" className="btn-primary transition text-sm lg:text-base">Login</Link>
@@ -60,6 +61,13 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Wedding Party
+              </Link>
+              <Link
+                href="/planning-committee"
+                className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Planning Committee
               </Link>
               <Link
                 href="/program"

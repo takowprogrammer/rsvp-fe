@@ -24,10 +24,19 @@ export default function GalleryPage() {
             "/photos/gallery/IMG-20250905-WA0024.jpg",
             "/photos/gallery/IMG-20250905-WA0025.jpg",
             "/photos/gallery/IMG-20250905-WA0026.jpg",
+            "/photos/gallery/IMG_6474.JPG",
+            "/photos/gallery/IMG_6477.JPG",
+            "/photos/gallery/IMG_6479.JPG",
+            "/photos/gallery/IMG_6480.JPG",
+            "/photos/gallery/IMG_6481.JPG",
+            "/photos/gallery/IMG_6482.JPG",
+            "/photos/gallery/IMG_6493.JPG",
         ],
         "Videos": [
             "/photos/videos/video1.mp4",
             "/photos/videos/video2.mp4",
+            "/photos/videos/copy_7D0B48A2-1C58-4112-B97A-1B4D5D0B1E37.mp4",
+            "/photos/videos/copy_CB63CE05-2E1D-4FD1-9B27-96B4263AEEA5.mp4"
         ],
     } as const;
 
@@ -49,7 +58,8 @@ export default function GalleryPage() {
                     src="/photos/gallery/IMG-20250905-WA0021.jpg"
                     alt="Doris and Emmanuel"
                     fill
-                    className="object-cover object-top"
+                    className="object-cover"
+                    style={{ objectPosition: 'center 30%' }}
                     priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
@@ -93,8 +103,14 @@ export default function GalleryPage() {
                             const posters = [
                                 "/photos/gallery/IMG-20250905-WA0007.jpg",
                                 "/photos/gallery/IMG-20250905-WA0015.jpg",
+                                "/photos/gallery/IMG-20250905-WA0001.jpg",
+                                "/photos/gallery/IMG-20250905-WA0003.jpg",
+                                "/photos/gallery/IMG-20250905-WA0005.jpg",
                             ];
                             const poster = posters[index % posters.length];
+                            const isPortrait = videoSrc.includes('copy_');
+                            const videoClassName = `absolute inset-0 w-full h-full ${isPortrait ? 'object-contain' : 'object-cover'}`;
+
                             return (
                                 <div key={index} className="rounded-2xl overflow-hidden shadow-lg bg-black">
                                     <div className="relative w-full aspect-video bg-black">
@@ -102,7 +118,7 @@ export default function GalleryPage() {
                                             controls
                                             preload="metadata"
                                             playsInline
-                                            className="absolute inset-0 w-full h-full object-cover"
+                                            className={videoClassName}
                                             poster={poster}
                                         >
                                             <source src={videoSrc} type="video/mp4" />

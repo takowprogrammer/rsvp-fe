@@ -19,6 +19,7 @@ export default function WeddingPartyPage() {
       "Nancy.jpg",
       "Nyufi.jpg",
       "Ngwikem Anasthasia.jpg",
+      "Jenny.jpg",
     ],
     "Bride's Friends": [
       "Anyiaka Florence.jpg",

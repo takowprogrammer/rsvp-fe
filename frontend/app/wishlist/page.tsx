@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import "yet-another-react-lightbox/styles.css";
+import Lightbox from "yet-another-react-lightbox";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -135,6 +141,9 @@ function getImagesForItem(label: string): string[] {
     `${base}/internal-decor-accessories.jpg`,
     `${base}/internal-decor-accessories1.jpg`,
     `${base}/internal-decor-accessories2.jpg`,
+    `${base}/internal-decor-accessories3.jpg`,
+    `${base}/internal-decor-accessories4.jpg`,
+    `${base}/internal-decor-accessories5.jpg`,
   ];
   if (l.includes("d 9cor accessories") || l.includes("decor accessories") || l.includes("interior decor")) return [
     `${base}/internal-decor-accessories.jpeg`,
@@ -194,25 +203,26 @@ function getImagesForItem(label: string): string[] {
 }
 
 export default function WishlistPage() {
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [slides, setSlides] = useState<{ src: string }[]>([]);
+
+  const handleImageClick = (itemImages: string[], imageIndex: number) => {
+    setSlides(itemImages.map((src) => ({ src })));
+    setIndex(imageIndex);
+    setOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50">
-      {/* Navigation Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-dusty-blue-200/40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="h-16 flex items-center justify-between">
-            <Link href="/" className="px-3 py-2 rounded-md text-dusty-blue-700 font-medium bg-white/90 ring-1 ring-dusty-blue-300 hover:bg-dusty-blue-50 hover:text-dusty-blue-700 transition-colors text-sm sm:text-base">Home</Link>
-            <div className="hidden md:flex items-center gap-4 lg:gap-6">
-              <Link href="/program" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Program</Link>
-              <Link href="/gallery" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Gallery</Link>
-              <Link href="/wishlist" className="px-3 py-2 rounded-md text-dusty-blue-700 font-semibold bg-dusty-blue-50 ring-1 ring-dusty-blue-200 text-sm lg:text-base">Wishlist</Link>
-              <Link href="/admin/login" className="btn-primary transition text-sm lg:text-base">Login</Link>
-            </div>
-            <div className="md:hidden">
-              <Link href="/wishlist" className="px-3 py-2 rounded-md text-dusty-blue-700 font-semibold bg-dusty-blue-50 ring-1 ring-dusty-blue-200 text-sm">Wishlist</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
+
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        index={index}
+        slides={slides}
+      />
 
       {/* Full-bleed hero */}
       <section className="relative h-[80vh] sm:h-[85vh] md:h-[100vh] w-full overflow-hidden mb-8 sm:mb-12 pt-20">
@@ -263,10 +273,11 @@ export default function WishlistPage() {
                             src={src}
                             alt={`${label} ${i + 1}`}
                             fill
-                            className="object-cover wishlist-slideshow-slide"
+                            className="object-cover wishlist-slideshow-slide cursor-pointer"
                             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                             loading="lazy"
                             style={{ animationDelay: `${i * 4}s`, animationDuration: totalDur }}
+                            onClick={() => handleImageClick(images, i)}
                           />
                         ))}
                       </>
@@ -275,9 +286,10 @@ export default function WishlistPage() {
                         src={images[0]}
                         alt={label}
                         fill
-                        className="object-cover"
+                        className="object-cover cursor-pointer"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         loading="lazy"
+                        onClick={() => handleImageClick(images, 0)}
                       />
                     )}
                     <span className="absolute top-3 left-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 text-dusty-blue-600 ring-1 ring-dusty-blue-200">

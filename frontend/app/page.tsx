@@ -15,7 +15,7 @@ export default function Home() {
   ];
 
   // Responsive object positions for different orientations
-  const getObjectPosition = (idx: number, isPortrait: boolean) => {
+  const getObjectPosition = (idx: number, isPortrait: boolean, isMobile: boolean) => {
     const basePositions = [
       "center top", // For crop1.jpg - show heads at top
       "center top", // For crop2.jpg - show heads at top
@@ -26,16 +26,20 @@ export default function Home() {
       "center top", // For crop8.jpg - show heads at top
     ];
 
-    if (isPortrait) {
-      // In portrait mode, use center positioning to show the most important part
+    if (isMobile && isPortrait) {
+      // In mobile portrait mode, center the image to show the complete picture
       return "center center";
     }
 
     return basePositions[idx] || "center";
   };
 
-  // Get object fit based on orientation - always use object-cover to fill the container
-  const getObjectFit = () => {
+  // Get object fit based on orientation - use object-contain for mobile to show full image
+  const getObjectFit = (isPortrait: boolean, isMobile: boolean) => {
+    if (isMobile && isPortrait) {
+      // Use object-contain for mobile portrait to show complete image
+      return "object-contain";
+    }
     return "object-cover";
   };
 
@@ -92,6 +96,7 @@ export default function Home() {
     return () => clearInterval(id);
   }, [slides.length]);
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 font-sans">
       {/* Navigation Header */}
@@ -104,6 +109,7 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-4 lg:gap-6">
               <Link href="/gallery" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Gallery</Link>
               <Link href="/wedding-party" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wedding Party</Link>
+              <Link href="/planning-committee" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Planning Committee</Link>
               <Link href="/program" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Program</Link>
               <Link href="/wishlist" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wishlist</Link>
               <Link href="/admin/login" className="btn-primary transition text-sm lg:text-base">Login</Link>
@@ -144,6 +150,13 @@ export default function Home() {
                   Wedding Party
                 </Link>
                 <Link
+                  href="/planning-committee"
+                  className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Planning Committee
+                </Link>
+                <Link
                   href="/program"
                   className="block px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
@@ -175,7 +188,9 @@ export default function Home() {
         className="relative h-screen overflow-hidden"
         style={{
           marginTop: "80px",
-          minHeight: "100vh"
+          minHeight: "100vh",
+          padding: 0,
+          margin: "80px 0 0 0"
         }}
       >
         {/* Loading indicator */}
@@ -193,15 +208,25 @@ export default function Home() {
             key={src}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
               }`}
+            style={{ padding: 0, margin: 0 }}
           >
-            <div className="relative w-full h-full min-h-full">
+            <div
+              className={`relative w-full h-full min-h-full ${isMobile && isPortrait ? "bg-gradient-to-br from-rose-100 via-gray-100 to-rose-200" : ""
+                }`}
+              style={{
+                padding: 0,
+                margin: 0,
+                width: "100%",
+                height: "100%"
+              }}
+            >
               <Image
                 src={src}
                 alt="Wedding invitation background"
                 fill
-                className={`transition-transform duration-[20000ms] ease-linear hover:scale-105 ${getObjectFit()}`}
+                className={`transition-transform duration-[20000ms] ease-linear hover:scale-105 ${getObjectFit(isPortrait && isMobile, isMobile)}`}
                 style={{
-                  objectPosition: getObjectPosition(idx, isPortrait && isMobile)
+                  objectPosition: getObjectPosition(idx, isPortrait && isMobile, isMobile)
                 }}
                 priority={idx === 0}
                 quality={isMobile ? 75 : 90}
@@ -227,8 +252,8 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {/* Card 1: Video + Text */}
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-3 sm:p-4">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-dusty-blue-50">
-                <video controls preload="metadata" playsInline className="absolute inset-0 w-full h-full object-contain">
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
+                <video controls preload="metadata" playsInline className="absolute inset-0 w-full h-full object-contain" poster="/photos/story/story3.jpg">
                   <source src="/photos/story/our_story_video.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
