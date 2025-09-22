@@ -140,7 +140,7 @@ export default function InvitationsPage() {
     const shareViaWhatsApp = (invitation: Invitation) => {
         // The link shared via WhatsApp should be the same as the preview link
         const invitationUrl = `${window.location.origin}/invitation/${invitation.id}`;
-        const message = `🎉 You're invited to ${invitation.title}!\n\nClick the link to open your personal invitation: ${invitationUrl}`;
+        const message = `Be our Guest of Honor\n\nClick the link to open your personal invitation: ${invitationUrl}`;
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
