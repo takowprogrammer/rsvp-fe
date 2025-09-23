@@ -42,9 +42,8 @@ interface InvitationClientProps {
 }
 
 function InvitationContent({ invitationId }: InvitationClientProps) {
-  // const searchParams = useSearchParams();
-  // const isPreview = searchParams?.get('preview') === '1';
-  const isPreview = false; // Temporarily disable preview mode
+  const searchParams = useSearchParams();
+  const isPreview = searchParams?.get('preview') === '1';
 
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,16 +87,12 @@ function InvitationContent({ invitationId }: InvitationClientProps) {
 
     const fetchInvitation = async () => {
       try {
-        console.log('Fetching invitation for ID:', invitationId);
         const res = await fetch(`/api/invitations/${invitationId}`);
-        console.log('API response status:', res.status);
         if (!res.ok) throw new Error('Invitation not found');
         const data = await res.json();
-        console.log('API response data:', data);
         setInvitation(data);
         setError('');
       } catch (e) {
-        console.error('Error fetching invitation:', e);
         const msg = e instanceof Error ? e.message : 'Failed to load invitation';
         setError(msg);
       } finally {
@@ -113,7 +108,7 @@ function InvitationContent({ invitationId }: InvitationClientProps) {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-rose-50 p-4">
         <div className="text-center">
           <div className="mx-auto mb-3 h-10 w-10 rounded-full border-2 border-sky-600 border-t-transparent animate-spin" />
-          <p className="text-slate-600">Loading invitation... {invitationId}</p>
+          <p className="text-slate-600">Loading invitation...</p>
         </div>
       </div>
     );
@@ -283,5 +278,16 @@ function InvitationContent({ invitationId }: InvitationClientProps) {
 }
 
 export default function InvitationClient({ invitationId }: InvitationClientProps) {
-  return <InvitationContent invitationId={invitationId} />;
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-amber-50 to-dusty-blue-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dusty-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading invitation...</p>
+        </div>
+      </div>
+    }>
+      <InvitationContent invitationId={invitationId} />
+    </Suspense>
+  );
 }
