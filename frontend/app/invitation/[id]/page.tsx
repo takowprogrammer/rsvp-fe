@@ -18,7 +18,7 @@ interface Invitation {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
-    
+
     // For now, return static metadata to avoid server-side fetch issues
     // TODO: Implement proper server-side data fetching
     return {
