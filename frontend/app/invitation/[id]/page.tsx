@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import InvitationClient from './InvitationClient';
 
 interface Invitation {
@@ -61,8 +62,15 @@ export default async function InvitationPage({ params }: { params: Promise<{ id:
   const { id } = await params;
 
   return (
-    <InvitationClient
-      invitationId={id}
-    />
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-amber-50 to-dusty-blue-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dusty-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading invitation...</p>
+        </div>
+      </div>
+    }>
+      <InvitationClient invitationId={id} />
+    </Suspense>
   );
 }
