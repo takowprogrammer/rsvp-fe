@@ -18,50 +18,20 @@ interface Invitation {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/${id}`, {
-      cache: 'no-store' // Ensure fresh data for each request
-    });
-
-    if (!response.ok) {
-      return {
+    
+    // For now, return static metadata to avoid server-side fetch issues
+    // TODO: Implement proper server-side data fetching
+    return {
+      title: 'Wedding Invitation - Doris & Emmanuel',
+      description: 'You\'re invited to our special day!',
+      openGraph: {
         title: 'Wedding Invitation - Doris & Emmanuel',
         description: 'You\'re invited to our special day!',
-      };
-    }
-
-    const invitation: Invitation = await response.json();
-
-    // Get the image URL for the preview
-    const getImageUrl = (imageUrl?: string): string => {
-      if (!imageUrl) return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/photos/gallery/IMG-20250905-WA0021.jpg`;
-
-      if (imageUrl.startsWith('/api/invitations/image/')) {
-        return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}${imageUrl}`;
-      }
-
-      if (imageUrl.startsWith('/invitations/')) {
-        const filename = imageUrl.replace('/invitations/', '');
-        return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/image/${filename}`;
-      }
-
-      return imageUrl;
-    };
-
-    const previewImage = getImageUrl(invitation.imageUrl);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com';
-    const invitationUrl = `${siteUrl}/invitation/${id}`;
-
-    return {
-      title: `Wedding Invitation - Doris & Emmanuel`,
-      description: invitation.message?.substring(0, 160) || 'You\'re invited to our special day!',
-      openGraph: {
-        title: `Wedding Invitation - Doris & Emmanuel`,
-        description: invitation.message?.substring(0, 160) || 'You\'re invited to our special day!',
-        url: invitationUrl,
+        url: `https://emmaris25.com/invitation/${id}`,
         siteName: 'Doris & Emmanuel Wedding',
         images: [
           {
-            url: previewImage,
+            url: 'https://emmaris25.com/photos/gallery/IMG-20250905-WA0021.jpg',
             width: 1200,
             height: 630,
             alt: 'Wedding Invitation',
@@ -72,9 +42,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       },
       twitter: {
         card: 'summary_large_image',
-        title: `Wedding Invitation - Doris & Emmanuel`,
-        description: invitation.message?.substring(0, 160) || 'You\'re invited to our special day!',
-        images: [previewImage],
+        title: 'Wedding Invitation - Doris & Emmanuel',
+        description: 'You\'re invited to our special day!',
+        images: ['https://emmaris25.com/photos/gallery/IMG-20250905-WA0021.jpg'],
       },
     };
   } catch (error) {
@@ -86,29 +56,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-// Server-side component that fetches invitation data
+// Server-side component that passes the invitation ID to the client
 export default async function InvitationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  let invitation: Invitation | null = null;
-  let error: string | null = null;
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/${id}`, {
-      cache: 'no-store' // Ensure fresh data for each request
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        error = 'Invitation not found';
-      } else {
-        error = 'Failed to load invitation';
-      }
-    } else {
-      invitation = await response.json();
-    }
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Something went wrong';
-  }
 
   // Helper function to get the correct image URL
   const getImageUrl = (imageUrl?: string): string => {
@@ -131,8 +81,7 @@ export default async function InvitationPage({ params }: { params: Promise<{ id:
 
   return (
     <InvitationClient
-      invitation={invitation}
-      error={error}
+      invitationId={id}
       getImageUrl={getImageUrl}
     />
   );
