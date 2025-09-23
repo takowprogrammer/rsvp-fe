@@ -20,16 +20,34 @@ interface Invitation {
 
 interface InvitationClientProps {
   invitationId: string;
-  getImageUrl: (imageUrl?: string) => string;
 }
 
-export default function InvitationClient({ invitationId, getImageUrl }: InvitationClientProps) {
+export default function InvitationClient({ invitationId }: InvitationClientProps) {
   const searchParams = useSearchParams();
   const isPreview = searchParams?.get('preview') === '1';
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFullImage, setShowFullImage] = useState(false);
+
+  // Helper function to get the correct image URL
+  const getImageUrl = (imageUrl?: string): string => {
+    if (!imageUrl) return '';
+
+    // If it's already an API URL, return as is
+    if (imageUrl.startsWith('/api/invitations/image/')) {
+      return imageUrl;
+    }
+
+    // If it's a static path like /invitations/filename.jpg, convert to API URL
+    if (imageUrl.startsWith('/invitations/')) {
+      const filename = imageUrl.replace('/invitations/', '');
+      return `/api/invitations/image/${filename}`;
+    }
+
+    // For any other format, return as is
+    return imageUrl;
+  };
 
   // Fetch invitation data
   useEffect(() => {

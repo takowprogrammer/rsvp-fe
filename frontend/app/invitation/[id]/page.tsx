@@ -18,7 +18,7 @@ interface Invitation {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
-    
+
     // For now, return static metadata to avoid server-side fetch issues
     // TODO: Implement proper server-side data fetching
     return {
@@ -60,29 +60,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function InvitationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  // Helper function to get the correct image URL
-  const getImageUrl = (imageUrl?: string): string => {
-    if (!imageUrl) return '';
-
-    // If it's already an API URL, return as is
-    if (imageUrl.startsWith('/api/invitations/image/')) {
-      return imageUrl;
-    }
-
-    // If it's a static path like /invitations/filename.jpg, convert to API URL
-    if (imageUrl.startsWith('/invitations/')) {
-      const filename = imageUrl.replace('/invitations/', '');
-      return `/api/invitations/image/${filename}`;
-    }
-
-    // For any other format, return as is
-    return imageUrl;
-  };
-
   return (
     <InvitationClient
       invitationId={id}
-      getImageUrl={getImageUrl}
     />
   );
 }
