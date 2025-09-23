@@ -18,8 +18,7 @@ interface Invitation {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app';
-    const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });
 
@@ -34,18 +33,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     // Get the image URL for the preview
     const getImageUrl = (imageUrl?: string): string => {
-      if (!imageUrl) return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/photos/gallery/IMG-20250905-WA0021.jpg`;
+      if (!imageUrl) return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/photos/gallery/IMG-20250905-WA0021.jpg`;
+
+      if (imageUrl.startsWith('/api/invitations/image/')) {
+        return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}${imageUrl}`;
+      }
 
       if (imageUrl.startsWith('/invitations/')) {
         const filename = imageUrl.replace('/invitations/', '');
-        return `${backendUrl}/api/invitations/image/${filename}`;
+        return `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/image/${filename}`;
       }
 
       return imageUrl;
     };
 
     const previewImage = getImageUrl(invitation.imageUrl);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com';
     const invitationUrl = `${siteUrl}/invitation/${id}`;
 
     return {
@@ -90,8 +93,7 @@ export default async function InvitationPage({ params }: { params: Promise<{ id:
   let error: string | null = null;
 
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app';
-    const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaris25.com'}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });
 
