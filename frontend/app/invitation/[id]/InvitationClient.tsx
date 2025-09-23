@@ -42,8 +42,9 @@ interface InvitationClientProps {
 }
 
 function InvitationContent({ invitationId }: InvitationClientProps) {
-  const searchParams = useSearchParams();
-  const isPreview = searchParams?.get('preview') === '1';
+  // const searchParams = useSearchParams();
+  // const isPreview = searchParams?.get('preview') === '1';
+  const isPreview = false; // Temporarily disable preview mode
 
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [loading, setLoading] = useState(true);
