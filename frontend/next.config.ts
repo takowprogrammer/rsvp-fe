@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const backendUrl = new URL(process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000');
+const backendUrl = new URL(process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app');
 
 const nextConfig: NextConfig = {
   // Enable static exports for better deployment compatibility
@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
         port: '5000',
         pathname: '/invitations/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wedding-rsvp-production.up.railway.app',
+        pathname: '/api/invitations/image/**',
       },
       {
         protocol: 'https',

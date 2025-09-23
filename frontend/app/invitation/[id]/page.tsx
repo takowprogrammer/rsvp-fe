@@ -18,7 +18,7 @@ interface Invitation {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app';
     const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });
@@ -90,7 +90,7 @@ export default async function InvitationPage({ params }: { params: Promise<{ id:
   let error: string | null = null;
 
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app';
     const response = await fetch(`${backendUrl}/api/invitations/${id}`, {
       cache: 'no-store' // Ensure fresh data for each request
     });

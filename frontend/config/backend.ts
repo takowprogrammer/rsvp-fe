@@ -4,7 +4,7 @@
 export const BACKEND_CONFIG = {
     // Base URL for your backend API
     // Common ports: 3001, 8000, 5000, 8080
-    BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000/api',
+    BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'https://wedding-rsvp-production.up.railway.app/api',
 
     // Individual service endpoints
     INVITATIONS: '/invitations',
