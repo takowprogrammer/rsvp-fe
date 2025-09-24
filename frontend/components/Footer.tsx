@@ -14,9 +14,12 @@ export default function Footer() {
           </p>
         </div>
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <span>💕</span>
-            <span className="font-serif">With love, Doris & Emmanuel</span>
+          <div className="text-center">
+            <div className="flex items-center gap-2 justify-center">
+              <span>💕</span>
+              <span className="font-serif">With love, Doris & Emmanuel</span>
+            </div>
+            <p className="font-serif font-semibold mt-1">#Emmaris25</p>
           </div>
           <div className="hidden md:block text-gray-300">|</div>
           <div className="flex items-center gap-2">
