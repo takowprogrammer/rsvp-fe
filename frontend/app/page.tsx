@@ -245,9 +245,12 @@ export default function Home() {
           </div>
         ))}
         {/* Hero overlay: Couple names */}
-        <div className="absolute inset-0 z-20 pointer-events-none h-full flex flex-col items-center justify-center md:justify-end md:pb-24 text-center px-4">
-          <div className="rounded-2xl bg-black/35 md:bg-black/25 text-white backdrop-blur-sm px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 w-full max-w-2xl">
+        <div className="absolute inset-0 z-20 pointer-events-none h-full flex flex-col items-center justify-center md:justify-end md:pb-48 text-center px-4">
+          <div className="rounded-2xl bg-black/35 md:bg-black/25 text-white backdrop-blur-sm px-4 py-2 sm:px-6 sm:py-3 w-auto">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif leading-tight">Doris & Emmanuel</h1>
+            <p className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wider text-white/90 mt-2">
+              #Emmaris25
+            </p>
           </div>
         </div>
       </div>
