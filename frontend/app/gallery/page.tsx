@@ -1,10 +1,20 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function GalleryPage() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    useEffect(() => {
+        const setVh = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        setVh();
+        window.addEventListener('resize', setVh);
+        return () => window.removeEventListener('resize', setVh);
+    }, []);
 
     // Gallery photos organized by category (add Videos)
     const galleryCategories = {
@@ -51,14 +61,25 @@ export default function GalleryPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 font-sans pt-24">
+        <div className="min-h-screen bg-gray-100 font-sans pt-16">
             {/* Hero Section */}
-            <div className="relative h-screen w-full">
+            <div
+                className="relative w-full"
+                style={{ height: 'calc(var(--vh, 1vh) * 100 - 64px)' }}
+            >
+                <Image
+                    src="/photos/gallery/IMG-20250905-WA0021.jpg"
+                    alt=""
+                    aria-hidden="true"
+                    fill
+                    className="object-cover blur-xl scale-110"
+                    style={{ objectPosition: 'center 30%' }}
+                />
                 <Image
                     src="/photos/gallery/IMG-20250905-WA0021.jpg"
                     alt="Doris and Emmanuel"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     style={{ objectPosition: 'center 30%' }}
                     priority
                 />
