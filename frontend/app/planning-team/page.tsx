@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function PlanningCommitteePage() {
+export default function PlanningTeamPage() {
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
     // Planning Committee members
@@ -10,27 +10,27 @@ export default function PlanningCommitteePage() {
         {
             name: "Diony Doris",
             image: "/photos/planning comittee/Diony Doris.jpg",
-            role: "Committee Member"
+            role: "Executive Director"
         },
         {
             name: "Lilian Vanessa",
             image: "/photos/planning comittee/Lilian Vanessa.jpg",
-            role: "Committee Member"
+            role: "Creative Director"
         },
         {
             name: "Mr Sergio",
             image: "/photos/planning comittee/Mr Sergio.jpg",
-            role: "Committee Member"
+            role: "Human Resource"
         },
         {
             name: "Naminel",
             image: "/photos/planning comittee/Naminel.jpg",
-            role: "Committee Member"
+            role: "Public Relations"
         },
         {
             name: "Sen Nadine",
             image: "/photos/planning comittee/Sen Nadine.jpg",
-            role: "Committee Member"
+            role: "The Accountant"
         }
     ];
 
@@ -48,7 +48,7 @@ export default function PlanningCommitteePage() {
             <div className="relative h-screen w-full">
                 <Image
                     src="/photos/gallery/IMG-20250905-WA0008.jpg"
-                    alt="Planning Committee"
+                    alt="Planning Team"
                     fill
                     className="object-cover"
                     style={{ objectPosition: 'center 40%' }}
@@ -57,10 +57,10 @@ export default function PlanningCommitteePage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
                 <div className="absolute inset-0 flex flex-col items-center justify-end text-center text-white p-4 pb-16 sm:pb-20">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 font-serif drop-shadow-xl leading-tight">
-                        Planning Committee
+                        Planning Team
                     </h1>
                     <p className="text-base sm:text-lg md:text-xl max-w-2xl font-sans drop-shadow-lg px-2">
-                        Meet the amazing team who made our special day possible.
+                        Meet the amazing team working to make our special day possible.
                     </p>
                     <a href="#committee" aria-label="See committee below" className="mt-2 sm:mt-1 inline-flex items-center justify-center text-white/90 hover:text-white transition">
                         <svg className="h-6 w-6 sm:h-8 sm:w-8 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -74,15 +74,15 @@ export default function PlanningCommitteePage() {
             <section id="committee" className="px-4 sm:px-6 py-10 md:py-16">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center font-serif">
-                        Our Planning Committee
+                        Our Planning Team
                     </h2>
                     <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-3xl mx-auto">
-                        We are deeply grateful to these wonderful people who dedicated their time, energy, and love to help us plan and organize our special day. Their support and hard work made our wedding dreams come true.
+                        We are deeply grateful to these wonderful people who are dedicating their time, energy, and love to help us plan and organize our special day. Your support and hardwork are greatly seen and appreciated.
                     </p>
 
                     {/* Committee Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                            {committeeMembers.map((member) => (
+                        {committeeMembers.map((member) => (
                             <div
                                 key={member.name}
                                 className="group bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-4 sm:p-6 hover:shadow-lg transition-all duration-300"
@@ -125,7 +125,7 @@ export default function PlanningCommitteePage() {
                                 Thank You
                             </h3>
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                To our incredible planning committee, words cannot express how grateful we are for your dedication, creativity, and unwavering support. You turned our vision into reality and made our wedding day absolutely perfect. We love you all!
+                                To our incredible planning team, words cannot express how grateful we are for your dedication, creativity, and unwavering support. You are turning our Vision into reality and as we draw close we strongly believe this day will be absolutely perfect. We love you all!
                             </p>
                             <p className="text-dusty-blue-600 font-semibold mt-4 text-sm sm:text-base">
                                 With love and appreciation,<br />

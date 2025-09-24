@@ -22,7 +22,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span>📱</span>
             <span className="font-serif">
-              For updates, contact the wedding party
+              For Updates Contact Sen Nadine (+237)674958851
             </span>
           </div>
         </div>

@@ -28,7 +28,7 @@ export default function Home() {
 
     if (isMobile && isPortrait) {
       // In mobile portrait mode, center the image to show the complete picture
-      return "center center";
+      return basePositions[idx] || "center top";
     }
 
     return basePositions[idx] || "center";
@@ -37,7 +37,6 @@ export default function Home() {
   // Get object fit based on orientation - use object-contain for mobile to show full image
   const getObjectFit = (isPortrait: boolean, isMobile: boolean) => {
     if (isMobile && isPortrait) {
-      // Use object-contain for mobile portrait to show complete image
       return "object-contain";
     }
     return "object-cover";
@@ -49,6 +48,18 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    setVh();
+
+    window.addEventListener("resize", setVh);
+    return () => window.removeEventListener("resize", setVh);
+  }, []);
 
   // Handle orientation and screen size detection
   useEffect(() => {
@@ -98,7 +109,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 font-sans">
+    <div className="bg-gradient-to-br from-dusty-blue-50 via-white to-nude-50 font-sans">
       {/* Navigation Header */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-b border-dusty-blue-200/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -109,7 +120,7 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-4 lg:gap-6">
               <Link href="/gallery" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Gallery</Link>
               <Link href="/wedding-party" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wedding Party</Link>
-              <Link href="/planning-committee" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Planning Committee</Link>
+              <Link href="/planning-team" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Planning Team</Link>
               <Link href="/program" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Program</Link>
               <Link href="/wishlist" className="px-3 py-2 rounded-md text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50 transition-colors font-medium text-sm lg:text-base">Wishlist</Link>
               <Link href="/admin/login" className="btn-primary transition text-sm lg:text-base">Login</Link>
@@ -185,12 +196,10 @@ export default function Home() {
 
       {/* Hero Section */}
       <div
-        className="relative h-screen overflow-hidden"
+        className="relative overflow-hidden"
         style={{
-          marginTop: "80px",
-          minHeight: "100vh",
-          padding: 0,
-          margin: "80px 0 0 0"
+          marginTop: "64px",
+          height: "calc(var(--vh, 1vh) * 100 - 64px)",
         }}
       >
         {/* Loading indicator */}
@@ -206,20 +215,19 @@ export default function Home() {
         {slides.map((src, idx) => (
           <div
             key={src}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
-              }`}
-            style={{ padding: 0, margin: 0 }}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"}`}
           >
-            <div
-              className={`relative w-full h-full min-h-full ${isMobile && isPortrait ? "bg-gradient-to-br from-rose-100 via-gray-100 to-rose-200" : ""
-                }`}
-              style={{
-                padding: 0,
-                margin: 0,
-                width: "100%",
-                height: "100%"
-              }}
-            >
+            {/* Background blurred image */}
+            <Image
+              src={src}
+              alt=""
+              fill
+              className="object-cover blur-xl scale-110"
+              quality={50}
+              aria-hidden="true"
+            />
+            {/* Foreground image */}
+            <div className={`relative w-full h-full`}>
               <Image
                 src={src}
                 alt="Wedding invitation background"
@@ -237,7 +245,7 @@ export default function Home() {
           </div>
         ))}
         {/* Hero overlay: Couple names */}
-        <div className="absolute inset-0 z-20 pointer-events-none flex flex-col items-center justify-end text-center pb-16 sm:pb-20 md:pb-24 px-4">
+        <div className="absolute inset-0 z-20 pointer-events-none h-full flex flex-col items-center justify-center md:justify-end md:pb-24 text-center px-4">
           <div className="rounded-2xl bg-black/35 md:bg-black/25 text-white backdrop-blur-sm px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 w-full max-w-2xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif leading-tight">Doris & Emmanuel</h1>
           </div>
@@ -253,7 +261,7 @@ export default function Home() {
             {/* Card 1: Video + Text */}
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-3 sm:p-4">
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
-                <video controls preload="metadata" playsInline className="absolute inset-0 w-full h-full object-contain" poster="/photos/story/story3.jpg">
+                <video controls preload="metadata" playsInline className="absolute inset-0 w-full h-full object-contain" poster="/photos/story/story_poster.jpg">
                   <source src="/photos/story/our_story_video.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
@@ -269,10 +277,11 @@ export default function Home() {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md border border-dusty-blue-200/40 p-3 sm:p-4">
               <div className="relative w-full h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden">
                 <Image
-                  src="/photos/story/our_story2.jpg"
+                  src="/photos/story/story_card.jpg"
                   alt="Story photo"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: 'center 40%' }}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>

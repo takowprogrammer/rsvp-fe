@@ -15,7 +15,6 @@ export default function GalleryPage() {
             "/photos/gallery/IMG-20250905-WA0007.jpg",
             "/photos/gallery/IMG-20250905-WA0008.jpg",
             "/photos/gallery/IMG-20250905-WA0012.jpg",
-            "/photos/gallery/IMG-20250905-WA0015.jpg",
             "/photos/gallery/IMG-20250905-WA0017.jpg",
             "/photos/gallery/IMG-20250905-WA0019.jpg",
             "/photos/gallery/IMG-20250905-WA0020.jpg",
@@ -31,6 +30,7 @@ export default function GalleryPage() {
             "/photos/gallery/IMG_6481.JPG",
             "/photos/gallery/IMG_6482.JPG",
             "/photos/gallery/IMG_6493.JPG",
+            "/photos/gallery/story_poster.jpg",
         ],
         "Videos": [
             "/photos/videos/video1.mp4",
@@ -130,7 +130,7 @@ export default function GalleryPage() {
                         })}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                         {galleryCategories[activeCategory].map((imageSrc, index) => (
                             <div
                                 key={index}

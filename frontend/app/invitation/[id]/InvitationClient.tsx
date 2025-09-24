@@ -145,7 +145,13 @@ function InvitationContent({ invitationId }: InvitationClientProps) {
               <SmartImage
                 src={getImageUrl(invitation.imageUrl) || '/placeholder-image.png'}
                 alt="Invitation"
-                className="w-full h-auto object-cover max-h-[85vh]"
+                className="rounded-lg"
+                style={{
+                  maxHeight: '85vh',
+                  objectFit: 'cover',
+                  width: '100%',
+                  height: 'auto'
+                }}
               />
 
               {/* Close button */}

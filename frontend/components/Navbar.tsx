@@ -50,14 +50,14 @@ export default function Navbar() {
               Wedding Party
             </Link>
             <Link 
-              href="/planning-committee" 
+              href="/planning-team" 
               className={`px-3 py-2 rounded-md transition-colors font-medium text-sm lg:text-base ${
-                pathname === '/planning-committee' 
+                pathname === '/planning-team' 
                   ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
                   : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
               }`}
             >
-              Planning Committee
+              Planning Team
             </Link>
             <Link 
               href="/program" 
@@ -125,15 +125,15 @@ export default function Navbar() {
                 Wedding Party
               </Link>
               <Link
-                href="/planning-committee"
+                href="/planning-team"
                 className={`block px-3 py-2 rounded-md transition-colors font-medium ${
-                  pathname === '/planning-committee' 
+                  pathname === '/planning-team' 
                     ? 'text-dusty-blue-700 bg-dusty-blue-100 ring-1 ring-dusty-blue-300' 
                     : 'text-gray-600 hover:text-dusty-blue-700 hover:bg-dusty-blue-50'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Planning Committee
+                Planning Team
               </Link>
               <Link
                 href="/program"
