@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import AuthGuard from "@/components/AuthGuard";
 
 export default function GalleryPage() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export default function GalleryPage() {
     };
 
     return (
+        <AuthGuard>
         <div className="min-h-screen bg-gray-100 font-sans pt-16">
             {/* Hero Section */}
             <div
@@ -232,5 +234,6 @@ export default function GalleryPage() {
             </div>
 
         </div>
+        </AuthGuard>
     );
 }
