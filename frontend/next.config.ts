@@ -47,6 +47,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  // Proxy API requests to backend
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${backendUrl.origin}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
